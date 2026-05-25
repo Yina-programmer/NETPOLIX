@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Películas - NetPolix</title>
+  <link rel="icon" href="/assets/logo-netpolix.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/variables.css">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/animations.css">
+  <link rel="stylesheet" href="/css/forms.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+  <div class="app-layout">
+    <div class="sidebar" id="sidebar"></div>
+    <div class="main-content">
+      <header class="top-bar">
+        <button class="mobile-menu-btn" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+        <h2 class="top-bar-title">Gestión de Películas</h2>
+        <div class="top-bar-actions"></div>
+      </header>
+      <div class="page-content">
+        <div class="page-header">
+          <h1>🎬 Películas</h1>
+          <p>Administra el catálogo de películas de NetPolix</p>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+          <div class="toolbar-left">
+            <div class="search-bar" style="min-width:280px;">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="search-input" placeholder="Buscar películas..." oninput="loadMovies()">
+            </div>
+          </div>
+          <div class="toolbar-right">
+            <button class="btn btn-outline" onclick="openExcelUpload()">📊 Importar Excel</button>
+            <button class="btn btn-primary" onclick="openMovieForm()">+ Nueva Película</button>
+          </div>
+        </div>
+
+        <!-- Movies Table -->
+        <div id="movies-table" class="fade-in-up">
+          <div class="skeleton skeleton-card"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/components/notifications.js"></script>
+  <script src="/js/components/sidebar.js"></script>
+  <script src="/js/components/modal.js"></script>
+  <script src="/js/components/table.js"></script>
+  <script src="/js/components/fileUpload.js"></script>
+  <script>
+    let movies = [];
+    let categories = [];
+    let languages = [];
+    let classifications = [];
+    let people = [];
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (!AuthManager.checkAuth()) return;
+      if (!AuthManager.redirectIfNotRole(['admin'])) return;
+      renderSidebar('admin');
+      
+      // Load reference data
+      [categories, languages, classifications, people] = await Promise.all([
+        NetPolixAPI.get('/categories'),
+        NetPolixAPI.get('/languages'),
+        NetPolixAPI.get('/classifications'),
+        NetPolixAPI.get('/people')
+      ]);
+      
+      loadMovies();
+    });
+
+    async function loadMovies() {
+      try {
+        const search = document.getElementById('search-input').value;
+        movies = await NetPolixAPI.get('/movies' + (search ? `?search=${encodeURIComponent(search)}` : ''));
+        
+        createTable('movies-table', {
+          columns: [
+            { key: 'imageUrl', header: '', type: 'image' },
+            { key: 'title', header: 'Título' },
+            { key: 'isan', header: 'ISAN', render: v => `<span class="text-muted fs-xs">${v || '-'}</span>` },
+            { key: 'year', header: 'Año' },
+            { key: 'classification', header: 'Clasif.', type: 'badge', badgeMap: { 'G': 'badge-green', 'PG': 'badge-blue', 'PG-13': 'badge-yellow', 'R': 'badge-red', 'NC-17': 'badge-red' } },
+            { key: 'categories', header: 'Categorías', type: 'array' },
+            { key: 'rating', header: 'Calificación', type: 'rating' },
+            { key: 'salePrice', header: 'Venta', type: 'currency' },
+            { key: 'rentalPrice', header: 'Alquiler', type: 'currency' }
+          ],
+          data: movies,
+          emptyMessage: 'No hay películas registradas',
+          actions: [
+            { name: 'edit', label: 'Editar', icon: '✏️', class: 'btn-ghost btn-sm', onClick: (row) => openMovieForm(row) },
+            { name: 'delete', label: 'Eliminar', icon: '🗑️', class: 'btn-ghost btn-sm', onClick: (row) => deleteMovie(row) }
+          ]
+        });
+      } catch (err) {
+        showNotification('Error cargando películas', 'error');
+      }
+    }
+
+    function openMovieForm(movie = null) {
+      const isEdit = !!movie;
+      const catOptions = categories.map(c => 
+        `<label class="form-check"><input type="checkbox" name="categories" value="${c.name}" ${movie?.categories?.includes(c.name) ? 'checked' : ''}><span class="form-check-label">${c.name}</span></label>`
+      ).join('');
+      const langOptions = languages.map(l => `<option value="${l.name}" ${movie?.originalLanguage === l.name ? 'selected' : ''}>${l.name}</option>`).join('');
+      const clsOptions = classifications.map(c => `<option value="${c.type}" ${movie?.classification === c.type ? 'selected' : ''}>${c.type} - ${c.description.substring(0, 40)}</option>`).join('');
+
+      const bodyHTML = `
+        <form id="movie-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">ISAN <span class="required">*</span></label>
+              <input type="text" class="form-control" name="isan" value="${movie?.isan || ''}" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Título Original <span class="required">*</span></label>
+              <input type="text" class="form-control" name="title" value="${movie?.title || ''}" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Año de Producción</label>
+              <input type="number" class="form-control" name="year" value="${movie?.year || ''}" min="1900" max="2030">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Duración (min)</label>
+              <input type="number" class="form-control" name="duration" value="${movie?.duration || ''}" min="1">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Clasificación</label>
+              <select class="form-select" name="classification"><option value="">Seleccionar...</option>${clsOptions}</select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Idioma Original</label>
+              <select class="form-select" name="originalLanguage"><option value="">Seleccionar...</option>${langOptions}</select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Categorías (mín. 1, máx. 3)</label>
+            <div class="form-multi-select">${catOptions}</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Calificación</label>
+            <select class="form-select" name="rating">
+              <option value="">Seleccionar...</option>
+              <option value="excelente" ${movie?.rating === 'excelente' ? 'selected' : ''}>Excelente</option>
+              <option value="buena" ${movie?.rating === 'buena' ? 'selected' : ''}>Buena</option>
+              <option value="regular" ${movie?.rating === 'regular' ? 'selected' : ''}>Regular</option>
+              <option value="mala" ${movie?.rating === 'mala' ? 'selected' : ''}>Mala</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Precio Venta ($)</label>
+              <input type="number" class="form-control" name="salePrice" value="${movie?.salePrice || ''}" step="0.01" min="0">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Precio Alquiler ($)</label>
+              <input type="number" class="form-control" name="rentalPrice" value="${movie?.rentalPrice || ''}" step="0.01" min="0">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">URL de Imagen</label>
+            <input type="url" class="form-control" name="imageUrl" value="${movie?.imageUrl || ''}" placeholder="https://...">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Descripción</label>
+            <textarea class="form-control" name="description" rows="3">${movie?.description || ''}</textarea>
+          </div>
+        </form>
+      `;
+
+      const footerHTML = `
+        <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveMovie('${movie?.id || ''}')">${isEdit ? 'Guardar Cambios' : 'Crear Película'}</button>
+      `;
+
+      showModal(isEdit ? 'Editar Película' : 'Nueva Película', bodyHTML, footerHTML, { size: 'lg' });
+    }
+
+    async function saveMovie(id) {
+      const form = document.getElementById('movie-form');
+      const formData = new FormData(form);
+      const selectedCats = [...form.querySelectorAll('input[name="categories"]:checked')].map(cb => cb.value);
+
+      if (selectedCats.length < 1 || selectedCats.length > 3) {
+        showNotification('Selecciona entre 1 y 3 categorías', 'warning');
+        return;
+      }
+
+      const data = {
+        isan: formData.get('isan'),
+        title: formData.get('title'),
+        year: parseInt(formData.get('year')) || null,
+        duration: parseInt(formData.get('duration')) || null,
+        classification: formData.get('classification'),
+        originalLanguage: formData.get('originalLanguage'),
+        categories: selectedCats,
+        rating: formData.get('rating'),
+        salePrice: parseFloat(formData.get('salePrice')) || 0,
+        rentalPrice: parseFloat(formData.get('rentalPrice')) || 0,
+        imageUrl: formData.get('imageUrl'),
+        description: formData.get('description')
+      };
+
+      try {
+        if (id) {
+          await NetPolixAPI.put('/movies/' + id, data);
+          showNotification('Película actualizada correctamente', 'success');
+        } else {
+          await NetPolixAPI.post('/movies', data);
+          showNotification('Película creada correctamente', 'success');
+        }
+        closeModal();
+        loadMovies();
+      } catch (err) {
+        showNotification(err.message, 'error');
+      }
+    }
+
+    function deleteMovie(movie) {
+      confirmModal('Eliminar Película', `¿Estás seguro de que deseas eliminar "${movie.title}"?`, async () => {
+        try {
+          await NetPolixAPI.delete('/movies/' + movie.id);
+          showNotification('Película eliminada', 'success');
+          loadMovies();
+        } catch (err) {
+          showNotification(err.message, 'error');
+        }
+      });
+    }
+
+    function openExcelUpload() {
+      const bodyHTML = `
+        <div id="excel-upload-area"></div>
+        <div id="excel-results" class="hidden mt-6"></div>
+      `;
+      const footerHTML = `
+        <button class="btn btn-ghost" onclick="closeModal()">Cerrar</button>
+        <button class="btn btn-primary" id="upload-btn" disabled onclick="uploadExcel()">Importar Películas</button>
+      `;
+
+      showModal('Importar Películas desde Excel', bodyHTML, footerHTML, { size: 'lg' });
+
+      let selectedFile = null;
+      createFileUpload('excel-upload-area', {
+        label: 'Arrastra tu archivo Excel aquí',
+        hint: 'Formatos aceptados: .xlsx, .xls. Máximo 10MB.',
+        onFileSelected: (file) => {
+          selectedFile = file;
+          document.getElementById('upload-btn').disabled = false;
+        }
+      });
+
+      window.uploadExcel = async function() {
+        if (!selectedFile) return;
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+        
+        try {
+          document.getElementById('upload-btn').disabled = true;
+          document.getElementById('upload-btn').textContent = 'Procesando...';
+          
+          const result = await NetPolixAPI.uploadFile('/upload/movies', formData);
+          
+          const resultsEl = document.getElementById('excel-results');
+          resultsEl.classList.remove('hidden');
+          resultsEl.innerHTML = `
+            <div class="card" style="border-color:${result.added > 0 ? 'rgba(0,255,136,0.3)' : 'rgba(255,0,84,0.3)'};">
+              <div class="card-body">
+                <h4 style="margin-bottom:var(--space-3);">Resultado de la importación</h4>
+                <div class="summary-row" style="margin-bottom:var(--space-4);">
+                  <div class="summary-card"><div class="summary-value text-success">${result.added}</div><div class="summary-label">Añadidas</div></div>
+                  <div class="summary-card"><div class="summary-value text-warning">${result.skipped?.length || 0}</div><div class="summary-label">Omitidas</div></div>
+                  <div class="summary-card"><div class="summary-value text-neon-red">${result.errors?.length || 0}</div><div class="summary-label">Errores</div></div>
+                </div>
+                ${result.errors?.length ? `<div style="max-height:150px;overflow-y:auto;"><p class="fs-sm fw-medium mb-2">Errores encontrados:</p>${result.errors.map(e => `<p class="fs-xs text-neon-red">Fila ${e.row}: ${e.messages?.join(', ') || 'Error desconocido'}</p>`).join('')}</div>` : ''}
+              </div>
+            </div>
+          `;
+          
+          if (result.added > 0) {
+            showNotification(`${result.added} películas importadas correctamente`, 'success');
+            loadMovies();
+          }
+        } catch (err) {
+          showNotification('Error al importar: ' + err.message, 'error');
+        }
+        
+        document.getElementById('upload-btn').disabled = false;
+        document.getElementById('upload-btn').textContent = 'Importar Películas';
+      };
+    }
+  </script>
+</body>
+</html>

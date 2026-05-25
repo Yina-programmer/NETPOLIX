@@ -1,0 +1,211 @@
+[
+  {
+    "id": "ser-001",
+    "title": "Stranger Things",
+    "season": 4,
+    "year": 2022,
+    "originalLanguage": "Inglés",
+    "subtitles": [
+      "Español",
+      "Francés",
+      "Portugués"
+    ],
+    "dubbing": [
+      "Español",
+      "Francés"
+    ],
+    "actors": [],
+    "directors": [],
+    "categories": [
+      "Terror",
+      "Drama",
+      "Ciencia Ficción"
+    ],
+    "rating": "excelente",
+    "avgRating": 4.7,
+    "totalRatings": 580,
+    "salePrice": 29.99,
+    "rentalPrice": 9.99,
+    "imageUrl": "https://image.tmdb.org/t/p/w500/49WJfeN0moxb9IPfGn8AIqMGskD.jpg",
+    "description": "Un grupo de jóvenes enfrenta fuerzas sobrenaturales en la pequeña ciudad de Hawkins.",
+    "createdAt": "2024-01-20T10:00:00Z",
+    "active": true,
+    "isan": "",
+    "seasons": null,
+    "episodes": null
+  },
+  {
+    "id": "ser-002",
+    "title": "The Last of Us",
+    "season": 1,
+    "year": 2023,
+    "originalLanguage": "Inglés",
+    "subtitles": [
+      "Español",
+      "Francés",
+      "Portugués"
+    ],
+    "dubbing": [
+      "Español"
+    ],
+    "actors": [
+      "per-020"
+    ],
+    "directors": [],
+    "categories": [
+      "Drama",
+      "Acción",
+      "Terror"
+    ],
+    "rating": "excelente",
+    "avgRating": 4.9,
+    "totalRatings": 420,
+    "salePrice": 34.99,
+    "rentalPrice": 11.99,
+    "imageUrl": "https://image.tmdb.org/t/p/w500/uKvVjHNqB5VmOrdxqAt2F7J78ED.jpg",
+    "description": "Joel y Ellie cruzan una América post-apocalíptica devastada por una pandemia fúngica.",
+    "createdAt": "2024-02-01T10:00:00Z",
+    "active": true
+  },
+  {
+    "id": "ser-003",
+    "title": "House of the Dragon",
+    "season": 2,
+    "year": 2024,
+    "originalLanguage": "Inglés",
+    "subtitles": [
+      "Español",
+      "Francés",
+      "Alemán"
+    ],
+    "dubbing": [
+      "Español",
+      "Francés"
+    ],
+    "actors": [
+      "per-028"
+    ],
+    "directors": [],
+    "categories": [
+      "Drama",
+      "Acción"
+    ],
+    "rating": "buena",
+    "avgRating": 4.3,
+    "totalRatings": 380,
+    "salePrice": 32.99,
+    "rentalPrice": 10.99,
+    "imageUrl": "https://image.tmdb.org/t/p/w500/7QMsOTMUswlwxJP0rTTZfmz2tX2.jpg",
+    "description": "La guerra civil entre los Targaryen desgarra Poniente en una lucha por el Trono de Hierro.",
+    "createdAt": "2024-06-15T10:00:00Z",
+    "active": true
+  },
+  {
+    "id": "ser-004",
+    "title": "Wednesday",
+    "season": 1,
+    "year": 2022,
+    "originalLanguage": "Inglés",
+    "subtitles": [
+      "Español",
+      "Francés",
+      "Japonés"
+    ],
+    "dubbing": [
+      "Español",
+      "Japonés"
+    ],
+    "actors": [],
+    "directors": [],
+    "categories": [
+      "Comedia",
+      "Suspenso"
+    ],
+    "rating": "buena",
+    "avgRating": 4.4,
+    "totalRatings": 510,
+    "salePrice": 24.99,
+    "rentalPrice": 7.99,
+    "imageUrl": "https://image.tmdb.org/t/p/w500/9PFonBhy4cQy7Jz20NpMygczOkv.jpg",
+    "description": "Wednesday Addams investiga una serie de asesinatos en la Academia Nevermore.",
+    "createdAt": "2024-01-25T10:00:00Z",
+    "active": true
+  },
+  {
+    "id": "ser-005",
+    "title": "Shogun",
+    "season": 1,
+    "year": 2024,
+    "originalLanguage": "Japonés",
+    "subtitles": [
+      "Español",
+      "Inglés",
+      "Francés"
+    ],
+    "dubbing": [
+      "Español",
+      "Inglés"
+    ],
+    "actors": [],
+    "directors": [],
+    "categories": [
+      "Drama",
+      "Acción"
+    ],
+    "rating": "excelente",
+    "avgRating": 4.8,
+    "totalRatings": 290,
+    "salePrice": 29.99,
+    "rentalPrice": 9.99,
+    "imageUrl": "https://image.tmdb.org/t/p/w500/7O4iVfOMQmdCSxhOg1WnzG1AgmT.jpg",
+    "description": "Un navegante inglés se ve envuelto en las intrigas políticas del Japón feudal.",
+    "createdAt": "2024-03-01T10:00:00Z",
+    "active": true
+  },
+  {
+    "id": "ser-006",
+    "title": "Severance",
+    "season": 2,
+    "year": 2025,
+    "originalLanguage": "Inglés",
+    "subtitles": [
+      "Español",
+      "Francés"
+    ],
+    "dubbing": [
+      "Español"
+    ],
+    "actors": [],
+    "directors": [],
+    "categories": [
+      "Suspenso",
+      "Ciencia Ficción",
+      "Drama"
+    ],
+    "rating": "excelente",
+    "avgRating": 4.7,
+    "totalRatings": 180,
+    "salePrice": 27.99,
+    "rentalPrice": 8.99,
+    "imageUrl": "https://image.tmdb.org/t/p/w500/pEAlFHuaJAWBA1TalifROuUU6EW.jpg",
+    "description": "Empleados de una corporación descubren terribles secretos sobre su procedimiento de separación.",
+    "createdAt": "2025-01-15T10:00:00Z",
+    "active": true
+  },
+  {
+    "id": "mpdlkkdk-z5aa08zgg",
+    "isan": "",
+    "title": "QQQQQ",
+    "seasons": null,
+    "episodes": null,
+    "categories": [],
+    "salePrice": 0,
+    "rentalPrice": 0,
+    "imageUrl": "",
+    "description": "",
+    "avgRating": 0,
+    "totalRatings": 0,
+    "createdAt": "2026-05-20T05:04:20.264Z",
+    "active": false
+  }
+]

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Gerente - NetPolix</title>
+  <link rel="icon" href="/assets/logo-netpolix.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="/css/variables.css">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/animations.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/forms.css">
+</head>
+<body>
+  <div class="app-layout">
+    <div class="sidebar" id="sidebar"></div>
+    <div class="main-content">
+      <header class="top-bar">
+        <button class="mobile-menu-btn" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+        <h2 class="top-bar-title">Dashboard de Reportes</h2>
+        <div class="top-bar-actions">
+          <div class="report-filters" style="margin:0;padding:var(--space-2) var(--space-3);">
+            <label>Desde:</label>
+            <input type="date" id="date-from" class="form-control" style="width:auto;padding:6px 10px;">
+            <label>Hasta:</label>
+            <input type="date" id="date-to" class="form-control" style="width:auto;padding:6px 10px;">
+            <button class="btn btn-primary btn-sm" onclick="loadAllData()">🔍 Filtrar</button>
+          </div>
+        </div>
+      </header>
+      <div class="page-content">
+        <div class="page-header fade-in-up">
+          <h1>📊 Reportes <span class="neon-text">Estratégicos</span></h1>
+          <p>Análisis de ventas, rankings y rendimiento del catálogo</p>
+        </div>
+
+        <!-- Summary Stats -->
+        <div class="stats-grid mb-8">
+          <div class="stat-card fade-in-up stagger-1">
+            <div class="stat-icon green">💵</div>
+            <div class="stat-value" id="total-revenue">$0</div>
+            <div class="stat-label">Ingresos Totales</div>
+          </div>
+          <div class="stat-card fade-in-up stagger-2">
+            <div class="stat-icon blue">📦</div>
+            <div class="stat-value" id="total-orders">0</div>
+            <div class="stat-label">Órdenes Totales</div>
+          </div>
+          <div class="stat-card fade-in-up stagger-3">
+            <div class="stat-icon yellow">🛒</div>
+            <div class="stat-value" id="total-sales">0</div>
+            <div class="stat-label">Ventas</div>
+          </div>
+          <div class="stat-card fade-in-up stagger-4">
+            <div class="stat-icon red">🎬</div>
+            <div class="stat-value" id="total-rentals">0</div>
+            <div class="stat-label">Alquileres</div>
+          </div>
+        </div>
+
+        <!-- Charts Row 1 -->
+        <div class="charts-grid mb-6">
+          <div class="chart-card fade-in-up" style="animation-delay:0.2s;">
+            <div class="chart-card-header">
+              <h4>📈 Ventas por Mes</h4>
+            </div>
+            <div class="chart-container" style="height:280px;">
+              <canvas id="sales-line-chart"></canvas>
+            </div>
+          </div>
+          <div class="chart-card fade-in-up" style="animation-delay:0.3s;">
+            <div class="chart-card-header">
+              <h4>🍩 Compras vs Alquileres</h4>
+            </div>
+            <div class="chart-container" style="height:280px;">
+              <canvas id="type-doughnut-chart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts Row 2 -->
+        <div class="charts-grid mb-6">
+          <div class="chart-card fade-in-up" style="animation-delay:0.35s;">
+            <div class="chart-card-header">
+              <h4>📊 Ingresos por Mes</h4>
+            </div>
+            <div class="chart-container" style="height:280px;">
+              <canvas id="revenue-bar-chart"></canvas>
+            </div>
+          </div>
+          <div class="chart-card fade-in-up" style="animation-delay:0.4s;">
+            <div class="chart-card-header">
+              <h4>🎯 Por Tipo de Contenido</h4>
+            </div>
+            <div class="chart-container" style="height:280px;">
+              <canvas id="content-doughnut-chart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rankings Row -->
+        <div class="charts-grid">
+          <!-- Popular Ranking -->
+          <div class="chart-card fade-in-up" style="animation-delay:0.45s;">
+            <div class="chart-card-header">
+              <h4>🏆 Top Películas más Compradas/Alquiladas</h4>
+            </div>
+            <div class="chart-container" style="height:320px;">
+              <canvas id="popular-chart"></canvas>
+            </div>
+          </div>
+
+          <!-- Rated Ranking -->
+          <div class="chart-card fade-in-up" style="animation-delay:0.5s;">
+            <div class="chart-card-header">
+              <h4>⭐ Ranking por Calificación</h4>
+            </div>
+            <div id="rating-ranking" class="ranking-list" style="max-height:320px;overflow-y:auto;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/components/notifications.js"></script>
+  <script src="/js/components/sidebar.js"></script>
+  <script src="/js/components/charts.js"></script>
+  <script>
+    let charts = {};
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!AuthManager.checkAuth()) return;
+      if (!AuthManager.redirectIfNotRole(['gerente', 'admin'])) return;
+      renderSidebar('gerente');
+
+      // Set default date range (last 12 months)
+      const today = new Date();
+      const yearAgo = new Date(today);
+      yearAgo.setFullYear(today.getFullYear() - 1);
+      document.getElementById('date-to').value = today.toISOString().split('T')[0];
+      document.getElementById('date-from').value = yearAgo.toISOString().split('T')[0];
+
+      loadAllData();
+    });
+
+    async function loadAllData() {
+      const from = document.getElementById('date-from').value;
+      const to = document.getElementById('date-to').value;
+
+      try {
+        const [salesData, typeData, popularData, ratedData] = await Promise.all([
+          NetPolixAPI.get(`/reports/sales?from=${from}&to=${to}`),
+          NetPolixAPI.get('/reports/sales-by-type'),
+          NetPolixAPI.get('/reports/ranking/popular'),
+          NetPolixAPI.get('/reports/ranking/rated')
+        ]);
+
+        // Update summary stats
+        document.getElementById('total-revenue').textContent = '$' + salesData.summary.totalRevenue.toFixed(2);
+        document.getElementById('total-orders').textContent = salesData.summary.totalOrders;
+        document.getElementById('total-sales').textContent = salesData.summary.totalCompras;
+        document.getElementById('total-rentals').textContent = salesData.summary.totalAlquileres;
+
+        renderCharts(salesData, typeData, popularData, ratedData);
+      } catch (err) {
+        showNotification('Error cargando reportes: ' + err.message, 'error');
+      }
+    }
+
+    function renderCharts(salesData, typeData, popularData, ratedData) {
+      // Destroy existing charts
+      Object.values(charts).forEach(c => c?.destroy());
+
+      const monthLabels = salesData.monthly.map(m => {
+        const [y, mo] = m.month.split('-');
+        return new Date(y, mo - 1).toLocaleDateString('es-CO', { month: 'short', year: '2-digit' });
+      });
+
+      // Sales line chart
+      charts.line = ChartManager.createLineChart('sales-line-chart', monthLabels, [
+        { label: 'Compras', data: salesData.monthly.map(m => m.compras), borderColor: 'rgba(0,255,136,1)', backgroundColor: 'rgba(0,255,136,0.1)' },
+        { label: 'Alquileres', data: salesData.monthly.map(m => m.alquileres), borderColor: 'rgba(0,212,255,1)', backgroundColor: 'rgba(0,212,255,0.1)' }
+      ]);
+
+      // Revenue bar chart
+      charts.bar = ChartManager.createBarChart('revenue-bar-chart', monthLabels, [{
+        label: 'Ingresos ($)',
+        data: salesData.monthly.map(m => Math.round(m.total * 100) / 100),
+        backgroundColor: monthLabels.map((_, i) => `hsla(${200 + i * 5}, 100%, 60%, 0.7)`)
+      }]);
+
+      // Type doughnut
+      charts.doughnut = ChartManager.createDoughnutChart('type-doughnut-chart',
+        ['Ventas', 'Alquileres'],
+        [typeData.compras.count, typeData.alquileres.count]
+      );
+
+      // Content type doughnut
+      charts.contentDoughnut = ChartManager.createDoughnutChart('content-doughnut-chart',
+        ['Películas', 'Series', 'Colecciones'],
+        [typeData.byItemType.movies, typeData.byItemType.series, typeData.byItemType.collections]
+      );
+
+      // Popular horizontal bar
+      if (popularData.length > 0) {
+        charts.popular = ChartManager.createHorizontalBarChart('popular-chart',
+          popularData.slice(0, 8).map(p => p.title.length > 20 ? p.title.substring(0, 20) + '…' : p.title),
+          popularData.slice(0, 8).map(p => p.total),
+          { datasetOptions: { label: 'Operaciones totales' } }
+        );
+      }
+
+      // Rating ranking
+      const ratingEl = document.getElementById('rating-ranking');
+      const medals = ['gold', 'silver', 'bronze'];
+      ratingEl.innerHTML = (ratedData.best || []).slice(0, 8).map((m, i) => `
+        <div class="ranking-item">
+          <div class="ranking-position ${medals[i] || 'default'}">${i + 1}</div>
+          <div class="ranking-info">
+            <div class="ranking-title">${m.title}</div>
+            <div class="ranking-subtitle">${m.totalRatings} calificaciones</div>
+          </div>
+          <div class="ranking-value">★ ${m.avgRating?.toFixed(1) || '0.0'}</div>
+        </div>
+      `).join('');
+    }
+  </script>
+</body>
+</html>

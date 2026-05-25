@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar Sesión - NetPolix</title>
+  <link rel="icon" href="/assets/logo-netpolix.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/variables.css">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/animations.css">
+  <link rel="stylesheet" href="/css/forms.css">
+  <link rel="stylesheet" href="/css/landing.css">
+</head>
+<body>
+  <div class="auth-page particle-bg">
+    <div class="auth-card fade-in-scale">
+      <a href="/">
+        <img src="/assets/logo-netpolix.png" alt="NetPolix" class="auth-logo">
+      </a>
+      <h2>Bienvenido de nuevo</h2>
+      <p class="auth-subtitle">Ingresa tus credenciales para acceder a NetPolix</p>
+
+      <form id="login-form">
+        <div class="form-group">
+          <label class="form-label" for="email">Correo Electrónico</label>
+          <input type="email" id="email" class="form-control" placeholder="tu@email.com" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">Contraseña</label>
+          <input type="password" id="password" class="form-control" placeholder="Tu contraseña" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg w-full" id="login-btn">
+          Iniciar Sesión
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        ¿No tienes cuenta? <a href="/register.html">Regístrate aquí</a>
+      </div>
+
+      <!-- Demo credentials -->
+      <div style="margin-top:var(--space-6);padding:var(--space-4);background:var(--bg-surface);border-radius:var(--radius-md);border:1px solid var(--border-color);">
+        <p style="font-size:var(--fs-xs);color:var(--text-muted);margin-bottom:var(--space-2);text-align:center;">Credenciales Demo</p>
+        <div style="display:grid;gap:var(--space-2);font-size:var(--fs-xs);">
+          <button type="button" class="btn btn-ghost btn-sm" style="justify-content:space-between;" onclick="fillDemo('admin@netpolix.com','Admin123')">
+            <span class="badge badge-blue">Admin</span>
+            <span class="text-muted">admin@netpolix.com</span>
+          </button>
+          <button type="button" class="btn btn-ghost btn-sm" style="justify-content:space-between;" onclick="fillDemo('gerente@netpolix.com','Gerente123')">
+            <span class="badge badge-green">Gerente</span>
+            <span class="text-muted">gerente@netpolix.com</span>
+          </button>
+          <button type="button" class="btn btn-ghost btn-sm" style="justify-content:space-between;" onclick="fillDemo('cliente@netpolix.com','Cliente1')">
+            <span class="badge badge-yellow">Cliente</span>
+            <span class="text-muted">cliente@netpolix.com</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/components/notifications.js"></script>
+  <script>
+    // Redirect if already logged in
+    if (NetPolixAPI.isLoggedIn()) {
+      AuthManager.redirectToDashboard();
+    }
+
+    function fillDemo(email, password) {
+      document.getElementById('email').value = email;
+      document.getElementById('password').value = password;
+    }
+
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('login-btn');
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      btn.disabled = true;
+      btn.textContent = 'Ingresando...';
+
+      try {
+        await NetPolixAPI.login(email, password);
+        showNotification('¡Bienvenido a NetPolix!', 'success');
+        setTimeout(() => AuthManager.redirectToDashboard(), 500);
+      } catch (err) {
+        showNotification(err.message || 'Error al iniciar sesión', 'error');
+        btn.disabled = false;
+        btn.textContent = 'Iniciar Sesión';
+      }
+    });
+  </script>
+</body>
+</html>

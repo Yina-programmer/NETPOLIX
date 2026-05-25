@@ -1,0 +1,180 @@
+// ================================
+// NetPolix - Prisma Schema
+// Base de datos PostgreSQL
+// ================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ── Usuarios ──────────────────────────────────────────
+model User {
+  id               String    @id
+  name             String
+  documentId       String    @unique
+  email            String    @unique
+  password         String
+  role             String    @default("cliente") // admin, gerente, cliente
+  registrationDate DateTime?
+  points           Int       @default(0)
+  referralCode     String?
+  referredBy       String?
+  penalized        Boolean   @default(false)
+  penalizedReason  String?
+  active           Boolean   @default(true)
+  createdAt        DateTime  @default(now())
+
+  orders Order[]
+
+  @@index([role])
+  @@index([active])
+  @@index([email])
+}
+
+// ── Películas ─────────────────────────────────────────
+model Movie {
+  id               String   @id
+  isan             String   @unique
+  title            String
+  year             Int      @default(0)
+  duration         Int      @default(0)
+  classification   String?
+  categories       String[]
+  originalLanguage String?
+  subtitles        String[]
+  dubbing          String[]
+  actors           String[] // IDs de Person
+  directors        String[] // IDs de Person
+  producers        String[] // IDs de Person
+  rating           String?
+  avgRating        Float    @default(0)
+  totalRatings     Int      @default(0)
+  salePrice        Float    @default(0)
+  rentalPrice      Float    @default(0)
+  imageUrl         String?
+  description      String?
+  createdAt        DateTime @default(now())
+  active           Boolean  @default(true)
+
+  @@index([active])
+  @@index([year])
+  @@index([title])
+}
+
+// ── Series ────────────────────────────────────────────
+model Series {
+  id               String   @id
+  isan             String?
+  title            String
+  season           Int?
+  seasons          Int?
+  episodes         Int?
+  year             Int?
+  originalLanguage String?
+  subtitles        String[]
+  dubbing          String[]
+  actors           String[]
+  directors        String[]
+  categories       String[]
+  rating           String?
+  avgRating        Float    @default(0)
+  totalRatings     Int      @default(0)
+  salePrice        Float    @default(0)
+  rentalPrice      Float    @default(0)
+  imageUrl         String?
+  description      String?
+  createdAt        DateTime @default(now())
+  active           Boolean  @default(true)
+
+  @@index([active])
+  @@index([title])
+}
+
+// ── Personas (actores, directores, productores) ──────
+model Person {
+  id        String   @id
+  name      String
+  birthDate String?
+  roles     String[] // actor, director, productor
+
+  @@index([name])
+}
+
+// ── Categorías (géneros) ─────────────────────────────
+model Category {
+  id          String  @id
+  name        String  @unique
+  description String?
+}
+
+// ── Clasificaciones de edad ──────────────────────────
+model Classification {
+  id          String  @id
+  type        String  @unique
+  description String?
+}
+
+// ── Idiomas ──────────────────────────────────────────
+model Language {
+  id   String @id
+  name String @unique
+  code String @unique
+}
+
+// ── Colecciones de videos ────────────────────────────
+model Collection {
+  id          String   @id
+  isan        String?
+  title       String
+  volume      Int      @default(1)
+  videos      String[] // IDs de Movie/Series
+  salePrice   Float    @default(0)
+  rentalPrice Float    @default(0)
+  description String?
+  createdAt   DateTime @default(now())
+  active      Boolean  @default(true)
+
+  @@index([active])
+}
+
+// ── Órdenes (compras y alquileres) ───────────────────
+model Order {
+  id             String   @id
+  userId         String
+  type           String   // compra, alquiler
+  itemType       String   // movie, series, collection
+  itemId         String
+  itemTitle      String
+  price          Float
+  pointsEarned   Int      @default(0)
+  pointsRedeemed Int      @default(0)
+  date           DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([date])
+  @@index([type])
+  @@index([itemType])
+}
+
+// ── Configuración del sistema ────────────────────────
+model Config {
+  id                    Int      @id @default(1)
+  movieRentalPrice      Float    @default(4.99)
+  movieSalePrice        Float    @default(14.99)
+  seriesRentalPrice     Float    @default(7.99)
+  seriesSalePrice       Float    @default(24.99)
+  collectionRentalPrice Float    @default(12.99)
+  collectionSalePrice   Float    @default(39.99)
+  pointsPerRental       Int      @default(10)
+  pointsPerSale         Int      @default(25)
+  pointsPerReferral     Int      @default(50)
+  pointsRedemptionRate  Int      @default(100)
+  lastUpdated           DateTime @default(now())
+}

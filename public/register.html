@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro - NetPolix</title>
+  <link rel="icon" href="/assets/logo-netpolix.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/variables.css">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/animations.css">
+  <link rel="stylesheet" href="/css/forms.css">
+  <link rel="stylesheet" href="/css/landing.css">
+</head>
+<body>
+  <div class="auth-page particle-bg">
+    <div class="auth-card fade-in-scale" style="max-width:520px;">
+      <a href="/">
+        <img src="/assets/logo-netpolix.png" alt="NetPolix" class="auth-logo">
+      </a>
+      <h2>Crear Cuenta</h2>
+      <p class="auth-subtitle">Únete a NetPolix y accede al mejor catálogo de películas</p>
+
+      <form id="register-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="name">Nombre Completo <span class="required">*</span></label>
+            <input type="text" id="name" class="form-control" placeholder="Tu nombre completo" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="documentId">Cédula / Documento <span class="required">*</span></label>
+            <input type="text" id="documentId" class="form-control" placeholder="Número de identificación" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="email">Correo Electrónico (usuario) <span class="required">*</span></label>
+          <input type="email" id="email" class="form-control" placeholder="tu@email.com" required minlength="6" maxlength="25">
+          <span class="form-help">Entre 6 y 25 caracteres. Será tu nombre de usuario.</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">Contraseña <span class="required">*</span></label>
+          <input type="password" id="password" class="form-control" placeholder="Mínimo 7 caracteres" required minlength="7" maxlength="15">
+          <span class="form-help">Entre 7 y 15 caracteres.</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="confirmPassword">Confirmar Contraseña <span class="required">*</span></label>
+          <input type="password" id="confirmPassword" class="form-control" placeholder="Repite tu contraseña" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="referredBy">Código de Referido (opcional)</label>
+          <input type="text" id="referredBy" class="form-control" placeholder="Cédula o código del cliente que te refirió">
+          <span class="form-help">Si alguien te refirió, ingresa su código y ambos recibirán puntos bonus.</span>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg w-full" id="register-btn">
+          Crear Mi Cuenta 🎬
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        ¿Ya tienes cuenta? <a href="/login.html">Inicia sesión aquí</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/components/notifications.js"></script>
+  <script>
+    if (NetPolixAPI.isLoggedIn()) AuthManager.redirectToDashboard();
+
+    document.getElementById('register-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('register-btn');
+      
+      const name = document.getElementById('name').value;
+      const documentId = document.getElementById('documentId').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      const referredBy = document.getElementById('referredBy').value;
+
+      if (password !== confirmPassword) {
+        showNotification('Las contraseñas no coinciden', 'error');
+        return;
+      }
+
+      if (email.length < 6 || email.length > 25) {
+        showNotification('El email debe tener entre 6 y 25 caracteres', 'error');
+        return;
+      }
+
+      if (password.length < 7 || password.length > 15) {
+        showNotification('La contraseña debe tener entre 7 y 15 caracteres', 'error');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Creando cuenta...';
+
+      try {
+        await NetPolixAPI.register({ name, documentId, email, password, referredBy: referredBy || undefined });
+        showNotification('¡Cuenta creada exitosamente! Bienvenido a NetPolix', 'success');
+        setTimeout(() => AuthManager.redirectToDashboard(), 800);
+      } catch (err) {
+        showNotification(err.message || 'Error al registrarse', 'error');
+        btn.disabled = false;
+        btn.textContent = 'Crear Mi Cuenta 🎬';
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "pricing": {
+    "movieRentalPrice": 4.99,
+    "movieSalePrice": 14.99,
+    "seriesRentalPrice": 7.99,
+    "seriesSalePrice": 24.99,
+    "collectionRentalPrice": 12.99,
+    "collectionSalePrice": 39.99
+  },
+  "points": {
+    "pointsPerRental": 10,
+    "pointsPerSale": 25,
+    "pointsPerReferral": 50,
+    "pointsRedemptionRate": 100
+  },
+  "lastUpdated": "2024-01-15T10:00:00Z"
+}

@@ -1,0 +1,37 @@
+{
+  "name": "netpolix",
+  "version": "1.0.0",
+  "description": "NetPolix - Plataforma de gestión comercial de películas y series",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "db:migrate": "npx prisma migrate dev",
+    "db:seed": "npx prisma db seed",
+    "db:studio": "npx prisma studio",
+    "db:push": "npx prisma db push",
+    "db:generate": "npx prisma generate",
+    "db:up": "docker compose up -d",
+    "db:setup": "npm run db:generate && npm run db:push && npm run db:seed"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.8.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "jsonwebtoken": "^9.0.2",
+    "bcryptjs": "^2.4.3",
+    "multer": "^1.4.5-lts.1",
+    "xlsx": "^0.18.5",
+    "cors": "^2.8.5",
+    "uuid": "^10.0.0"
+  },
+  "devDependencies": {
+    "prisma": "^6.8.0"
+  },
+  "keywords": ["netpolix", "movies", "streaming", "management"],
+  "author": "NetPolix Team",
+  "license": "ISC"
+}

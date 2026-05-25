@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Perfil - NetPolix</title>
+  <link rel="icon" href="/assets/logo-netpolix.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/variables.css">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/animations.css">
+  <link rel="stylesheet" href="/css/forms.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+  <div class="app-layout">
+    <div class="sidebar" id="sidebar"></div>
+    <div class="main-content">
+      <header class="top-bar">
+        <button class="mobile-menu-btn" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+        <h2 class="top-bar-title">Mi Perfil</h2>
+      </header>
+      <div class="page-content">
+        <div class="page-header"><h1>👤 Mi <span class="neon-text">Perfil</span></h1></div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-6);">
+          <!-- Profile info -->
+          <div class="card fade-in-up">
+            <div class="card-header"><h4>📋 Información Personal</h4></div>
+            <div class="card-body">
+              <!-- Avatar -->
+              <div style="display:flex;align-items:center;gap:var(--space-4);margin-bottom:var(--space-6);">
+                <div class="avatar avatar-xl" id="profile-avatar">??</div>
+                <div>
+                  <div class="fw-bold fs-xl" id="profile-name">Cargando...</div>
+                  <div class="text-secondary fs-sm" id="profile-email"></div>
+                  <div class="badge badge-blue mt-2">Cliente</div>
+                </div>
+              </div>
+              <form id="profile-form">
+                <div class="form-group">
+                  <label class="form-label">Nombre Completo</label>
+                  <input type="text" class="form-control" id="edit-name">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Correo Electrónico</label>
+                  <input type="email" class="form-control" id="edit-email" minlength="6" maxlength="25">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Cédula</label>
+                  <input type="text" class="form-control" id="profile-doc" disabled style="opacity:0.5;">
+                  <span class="form-help">El documento no puede ser modificado.</span>
+                </div>
+                <button type="submit" class="btn btn-primary w-full">Guardar Cambios</button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Right column -->
+          <div style="display:flex;flex-direction:column;gap:var(--space-6);">
+            <!-- Points card -->
+            <div class="card fade-in-up" style="animation-delay:0.1s;background:linear-gradient(135deg,rgba(0,212,255,0.08),rgba(255,0,84,0.08));border-color:var(--border-neon-blue);">
+              <div class="card-body">
+                <div style="text-align:center;padding:var(--space-4) 0;">
+                  <div style="font-size:3rem;margin-bottom:var(--space-2);">⭐</div>
+                  <div style="font-size:3.5rem;font-weight:800;font-family:var(--font-heading);" class="neon-text" id="points-display">0</div>
+                  <div class="text-secondary">Puntos Acumulados</div>
+                  <div class="fs-xs text-muted mt-2">100 puntos = $1.00 de descuento</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Referral code -->
+            <div class="card fade-in-up" style="animation-delay:0.15s;">
+              <div class="card-header"><h4>🔗 Mi Código de Referido</h4></div>
+              <div class="card-body">
+                <p class="text-secondary fs-sm">Comparte este código y gana puntos cuando tus referidos se registren.</p>
+                <div class="input-group mt-3">
+                  <input type="text" class="form-control fw-bold" id="referral-code" readonly style="letter-spacing:0.1em;">
+                  <button class="btn btn-primary" onclick="copyReferral()">📋 Copiar</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Change password -->
+            <div class="card fade-in-up" style="animation-delay:0.2s;">
+              <div class="card-header"><h4>🔒 Cambiar Contraseña</h4></div>
+              <div class="card-body">
+                <form id="password-form">
+                  <div class="form-group">
+                    <label class="form-label">Contraseña Actual</label>
+                    <input type="password" class="form-control" id="current-password">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Nueva Contraseña (7-15 chars)</label>
+                    <input type="password" class="form-control" id="new-password" minlength="7" maxlength="15">
+                  </div>
+                  <button type="submit" class="btn btn-outline w-full">Actualizar Contraseña</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Membership info -->
+        <div class="card mt-6 fade-in-up" style="animation-delay:0.25s;">
+          <div class="card-body">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <span style="font-size:2rem;">🗓️</span>
+                <div><div class="fw-medium">Miembro desde</div><div class="text-muted fs-sm" id="member-since">-</div></div>
+              </div>
+              <div class="flex items-center gap-3">
+                <span style="font-size:2rem;">👥</span>
+                <div><div class="fw-medium">Referido por</div><div class="text-muted fs-sm" id="referred-by">Nadie (directo)</div></div>
+              </div>
+              <a href="/client/history.html" class="btn btn-outline">📋 Ver Historial</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/components/notifications.js"></script>
+  <script src="/js/components/sidebar.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (!AuthManager.checkAuth()) return;
+      if (!AuthManager.redirectIfNotRole(['cliente'])) return;
+      renderSidebar('cliente');
+
+      try {
+        const profile = await NetPolixAPI.get('/auth/profile');
+        document.getElementById('profile-avatar').textContent = AuthManager.getUserInitials(profile.name);
+        document.getElementById('profile-name').textContent = profile.name;
+        document.getElementById('profile-email').textContent = profile.email;
+        document.getElementById('edit-name').value = profile.name;
+        document.getElementById('edit-email').value = profile.email;
+        document.getElementById('profile-doc').value = profile.documentId;
+        document.getElementById('points-display').textContent = profile.points || 0;
+        document.getElementById('referral-code').value = profile.referralCode || '-';
+        document.getElementById('member-since').textContent = profile.registrationDate ? new Date(profile.registrationDate).toLocaleDateString('es-CO', { year:'numeric', month:'long', day:'numeric' }) : '-';
+        document.getElementById('referred-by').textContent = profile.referredBy || 'Nadie (directo)';
+      } catch (err) {
+        showNotification('Error cargando perfil', 'error');
+      }
+
+      document.getElementById('profile-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        try {
+          await NetPolixAPI.put('/auth/profile', { name: document.getElementById('edit-name').value, email: document.getElementById('edit-email').value });
+          showNotification('Perfil actualizado correctamente', 'success');
+        } catch (err) { showNotification(err.message, 'error'); }
+      });
+
+      document.getElementById('password-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        try {
+          await NetPolixAPI.put('/auth/profile', { currentPassword: document.getElementById('current-password').value, newPassword: document.getElementById('new-password').value });
+          showNotification('Contraseña actualizada correctamente', 'success');
+          document.getElementById('current-password').value = '';
+          document.getElementById('new-password').value = '';
+        } catch (err) { showNotification(err.message, 'error'); }
+      });
+    });
+
+    function copyReferral() {
+      const code = document.getElementById('referral-code').value;
+      navigator.clipboard.writeText(code).then(() => showNotification('Código copiado al portapapeles', 'success'));
+    }
+  </script>
+</body>
+</html>

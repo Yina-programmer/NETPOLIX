@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configuración - NetPolix Admin</title>
+  <link rel="icon" href="/assets/logo-netpolix.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/variables.css"><link rel="stylesheet" href="/css/base.css"><link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/layout.css"><link rel="stylesheet" href="/css/animations.css"><link rel="stylesheet" href="/css/forms.css"><link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+  <div class="app-layout">
+    <div class="sidebar" id="sidebar"></div>
+    <div class="main-content">
+      <header class="top-bar">
+        <button class="mobile-menu-btn" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+        <h2 class="top-bar-title">Configuración</h2>
+      </header>
+      <div class="page-content">
+        <div class="page-header"><h1>⚙️ Configuración del <span class="neon-text">Sistema</span></h1><p>Precios predeterminados y sistema de puntos</p></div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-6);">
+          <!-- Pricing -->
+          <div class="card fade-in-up">
+            <div class="card-header"><h4>💰 Precios Predeterminados</h4></div>
+            <div class="card-body">
+              <form id="pricing-form">
+                <div class="form-group">
+                  <label class="form-label">Precio Venta Película ($)</label>
+                  <input type="number" class="form-control" id="movieSalePrice" step="0.01" min="0">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Precio Alquiler Película ($)</label>
+                  <input type="number" class="form-control" id="movieRentalPrice" step="0.01" min="0">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Precio Venta Serie ($)</label>
+                  <input type="number" class="form-control" id="seriesSalePrice" step="0.01" min="0">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Precio Alquiler Serie ($)</label>
+                  <input type="number" class="form-control" id="seriesRentalPrice" step="0.01" min="0">
+                </div>
+                <button type="submit" class="btn btn-primary w-full">Guardar Precios</button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Points -->
+          <div class="card fade-in-up" style="animation-delay:0.1s;">
+            <div class="card-header"><h4>⭐ Sistema de Puntos</h4></div>
+            <div class="card-body">
+              <form id="points-form">
+                <div class="form-group">
+                  <label class="form-label">Puntos por Compra</label>
+                  <input type="number" class="form-control" id="pointsPerSale" min="0">
+                  <span class="form-help">Puntos otorgados por cada compra realizada</span>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Puntos por Alquiler</label>
+                  <input type="number" class="form-control" id="pointsPerRental" min="0">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Puntos por Referido</label>
+                  <input type="number" class="form-control" id="pointsPerReferral" min="0">
+                  <span class="form-help">Puntos otorgados cuando un referido se registra</span>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Tasa de Redención</label>
+                  <input type="number" class="form-control" id="pointsRedemptionRate" min="1">
+                  <span class="form-help">Cuántos puntos = $1.00 de descuento</span>
+                </div>
+                <button type="submit" class="btn btn-primary w-full">Guardar Puntos</button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Last updated -->
+        <div class="card mt-6 fade-in-up" style="animation-delay:0.2s;">
+          <div class="card-body" style="padding:var(--space-4);">
+            <div class="flex items-center gap-3 text-muted fs-sm">
+              <span>🕐</span>
+              <span>Última actualización: <span id="last-updated">-</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="/js/api.js"></script><script src="/js/auth.js"></script><script src="/js/components/notifications.js"></script>
+  <script src="/js/components/sidebar.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (!AuthManager.checkAuth() || !AuthManager.redirectIfNotRole(['admin'])) return;
+      renderSidebar('admin');
+      try {
+        const config = await NetPolixAPI.get('/config');
+        document.getElementById('movieSalePrice').value = config.pricing?.movieSalePrice || 14.99;
+        document.getElementById('movieRentalPrice').value = config.pricing?.movieRentalPrice || 4.99;
+        document.getElementById('seriesSalePrice').value = config.pricing?.seriesSalePrice || 24.99;
+        document.getElementById('seriesRentalPrice').value = config.pricing?.seriesRentalPrice || 7.99;
+        document.getElementById('pointsPerSale').value = config.points?.pointsPerSale || 25;
+        document.getElementById('pointsPerRental').value = config.points?.pointsPerRental || 10;
+        document.getElementById('pointsPerReferral').value = config.points?.pointsPerReferral || 50;
+        document.getElementById('pointsRedemptionRate').value = config.points?.pointsRedemptionRate || 100;
+        if (config.lastUpdated) document.getElementById('last-updated').textContent = new Date(config.lastUpdated).toLocaleString('es-CO');
+      } catch (e) { showNotification(e.message, 'error'); }
+
+      document.getElementById('pricing-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        try {
+          await NetPolixAPI.put('/config', { pricing: {
+            movieSalePrice: parseFloat(document.getElementById('movieSalePrice').value),
+            movieRentalPrice: parseFloat(document.getElementById('movieRentalPrice').value),
+            seriesSalePrice: parseFloat(document.getElementById('seriesSalePrice').value),
+            seriesRentalPrice: parseFloat(document.getElementById('seriesRentalPrice').value)
+          }});
+          showNotification('Precios actualizados correctamente', 'success');
+        } catch (e) { showNotification(e.message, 'error'); }
+      });
+
+      document.getElementById('points-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        try {
+          await NetPolixAPI.put('/config', { points: {
+            pointsPerSale: parseInt(document.getElementById('pointsPerSale').value),
+            pointsPerRental: parseInt(document.getElementById('pointsPerRental').value),
+            pointsPerReferral: parseInt(document.getElementById('pointsPerReferral').value),
+            pointsRedemptionRate: parseInt(document.getElementById('pointsRedemptionRate').value)
+          }});
+          showNotification('Configuración de puntos actualizada', 'success');
+        } catch (e) { showNotification(e.message, 'error'); }
+      });
+    });
+  </script>
+</body>
+</html>

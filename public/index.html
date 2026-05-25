@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="NetPolix - Tu plataforma premium de compra y alquiler de películas y series">
+  <title>NetPolix - Compra y Alquiler de Películas</title>
+  <link rel="icon" href="/assets/logo-netpolix.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/variables.css">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/animations.css">
+  <link rel="stylesheet" href="/css/landing.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="landing-nav" id="landing-nav">
+    <a href="/" class="nav-logo">
+      <img src="/assets/logo-netpolix.png" alt="NetPolix">
+      <span>NetPolix</span>
+    </a>
+    <div class="nav-links">
+      <a href="#catalog" class="nav-link">Catálogo</a>
+      <a href="#features" class="nav-link">Características</a>
+    </div>
+    <div class="nav-actions" id="nav-actions">
+      <a href="/login.html" class="btn btn-ghost">Iniciar Sesión</a>
+      <a href="/register.html" class="btn btn-primary">Registrarse</a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero particle-bg">
+    <div class="hero-content">
+      <img src="/assets/logo-netpolix.png" alt="NetPolix" class="hero-logo">
+      <h1>Tu mundo de <span class="neon-text">películas y series</span> en un solo lugar</h1>
+      <p>Compra, alquila y disfruta del mejor contenido cinematográfico. Acumula puntos con cada transacción y accede a beneficios exclusivos.</p>
+      <div class="hero-actions">
+        <a href="/register.html" class="btn btn-primary btn-lg">Comenzar Ahora 🎬</a>
+        <a href="#catalog" class="btn btn-outline btn-lg">Ver Catálogo</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-value" id="stat-movies">20+</div>
+          <div class="hero-stat-label">Películas</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-value" id="stat-series">6+</div>
+          <div class="hero-stat-label">Series</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-value">24/7</div>
+          <div class="hero-stat-label">Disponible</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section id="features" class="catalog-section">
+    <div class="container">
+      <div class="section-header" style="justify-content:center;margin-bottom:var(--space-10);">
+        <h2 class="neon-text text-center">¿Por qué <span style="background:var(--gradient-neon);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">NetPolix</span>?</h2>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card fade-in-up stagger-1">
+          <div class="feature-icon">🎬</div>
+          <h3>Catálogo Premium</h3>
+          <p>Películas y series de todos los géneros, clasificaciones e idiomas. Desde clásicos hasta estrenos.</p>
+        </div>
+        <div class="feature-card fade-in-up stagger-2">
+          <div class="feature-icon">💰</div>
+          <h3>Compra o Alquila</h3>
+          <p>Elige entre comprar permanentemente o alquilar a un precio reducido. Tú decides cómo disfrutar.</p>
+        </div>
+        <div class="feature-card fade-in-up stagger-3">
+          <div class="feature-icon">⭐</div>
+          <h3>Sistema de Puntos</h3>
+          <p>Acumula puntos con cada compra y alquiler. Canjéalos por descuentos en tus próximas transacciones.</p>
+        </div>
+        <div class="feature-card fade-in-up stagger-4">
+          <div class="feature-icon">👥</div>
+          <h3>Programa de Referidos</h3>
+          <p>Invita a tus amigos y gana puntos extra cuando se registren con tu código de referido.</p>
+        </div>
+        <div class="feature-card fade-in-up stagger-5">
+          <div class="feature-icon">🌐</div>
+          <h3>Múltiples Idiomas</h3>
+          <p>Contenido con subtítulos y doblajes en 9 idiomas. Disfruta en tu idioma preferido.</p>
+        </div>
+        <div class="feature-card fade-in-up stagger-6">
+          <div class="feature-icon">📊</div>
+          <h3>Calificaciones</h3>
+          <p>Califica las películas y descubre las mejores según la comunidad NetPolix.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Catalog Preview -->
+  <section id="catalog" class="catalog-section" style="background:var(--bg-darker);">
+    <div class="container">
+      <div class="section-header">
+        <h2>🎬 Catálogo de Películas</h2>
+        <div class="flex gap-3">
+          <div class="search-bar" style="min-width:280px;">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="search-input" placeholder="Buscar películas..." oninput="filterMovies()">
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter chips -->
+      <div class="filter-chips mb-6" id="category-filters"></div>
+
+      <!-- Movie Grid -->
+      <div class="catalog-grid" id="movies-grid">
+        <div class="skeleton skeleton-card"></div>
+        <div class="skeleton skeleton-card"></div>
+        <div class="skeleton skeleton-card"></div>
+        <div class="skeleton skeleton-card"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="landing-footer">
+    <hr class="neon-line neon-line-animated" style="max-width:200px;margin:0 auto var(--space-6);">
+    <p>© 2024 <span class="footer-brand">NetPolix</span>. Todos los derechos reservados.</p>
+    <p style="margin-top:var(--space-2);">Plataforma de gestión comercial de películas y series.</p>
+  </footer>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/components/notifications.js"></script>
+  <script>
+    let allMovies = [];
+    let activeCategory = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Check if logged in - update nav
+      const user = NetPolixAPI.getUser();
+      if (user) {
+        const navActions = document.getElementById('nav-actions');
+        let dashUrl = '/';
+        if (user.role === 'admin') dashUrl = '/admin/dashboard.html';
+        else if (user.role === 'gerente') dashUrl = '/manager/dashboard.html';
+        else dashUrl = '/client/catalog.html';
+        navActions.innerHTML = `
+          <span class="text-secondary" style="font-size:var(--fs-sm);">Hola, ${user.name.split(' ')[0]}</span>
+          <a href="${dashUrl}" class="btn btn-primary btn-sm">Mi Panel</a>
+        `;
+      }
+
+      // Scroll effect on nav
+      window.addEventListener('scroll', () => {
+        document.getElementById('landing-nav').classList.toggle('scrolled', window.scrollY > 50);
+      });
+
+      // Load movies
+      try {
+        allMovies = await NetPolixAPI.get('/movies');
+        document.getElementById('stat-movies').textContent = allMovies.length + '+';
+        
+        // Load categories for filters
+        const categories = await NetPolixAPI.get('/categories');
+        const filtersEl = document.getElementById('category-filters');
+        filtersEl.innerHTML = `<button class="chip active" onclick="filterByCategory(null, this)">Todas</button>` +
+          categories.map(c => `<button class="chip" onclick="filterByCategory('${c.name}', this)">${c.name}</button>`).join('');
+        
+        renderMovies(allMovies);
+      } catch (err) {
+        console.error('Error loading movies:', err);
+      }
+
+      // Load series count
+      try {
+        const series = await NetPolixAPI.get('/series');
+        document.getElementById('stat-series').textContent = series.length + '+';
+      } catch (e) {}
+    });
+
+    function renderMovies(movies) {
+      const grid = document.getElementById('movies-grid');
+      if (movies.length === 0) {
+        grid.innerHTML = '<div class="empty-state"><div class="empty-icon">🎬</div><h3>No se encontraron películas</h3><p>Intenta con otros filtros de búsqueda.</p></div>';
+        return;
+      }
+
+      grid.innerHTML = movies.map((m, i) => `
+        <div class="movie-card fade-in-up" style="animation-delay:${i * 0.05}s">
+          <div class="movie-poster-wrapper">
+            <img src="${m.imageUrl || '/assets/logo-netpolix.png'}" alt="${m.title}" class="movie-poster"
+                 onerror="this.src='/assets/logo-netpolix.png'">
+            <div class="movie-overlay">
+              <div>
+                <div style="margin-bottom:8px;">${(m.categories || []).map(c => `<span class="badge badge-blue" style="margin-right:4px;margin-bottom:4px;">${c}</span>`).join('')}</div>
+                <p style="font-size:var(--fs-xs);color:var(--text-secondary);margin:0;">${m.description ? m.description.substring(0, 100) + '...' : ''}</p>
+              </div>
+            </div>
+          </div>
+          <div class="movie-info">
+            <div class="movie-title">${m.title}</div>
+            <div class="flex items-center justify-between mt-2">
+              <span class="movie-year">${m.year} · ${m.duration || '?'}min · ${m.classification || 'NR'}</span>
+              <div class="movie-rating">★ ${m.avgRating ? m.avgRating.toFixed(1) : 'N/A'}</div>
+            </div>
+            <div class="movie-meta">
+              <span class="movie-price">$${m.salePrice?.toFixed(2) || '0.00'}</span>
+              <span style="font-size:var(--fs-xs);color:var(--text-muted);">Alquiler: $${m.rentalPrice?.toFixed(2) || '0.00'}</span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function filterMovies() {
+      const q = document.getElementById('search-input').value.toLowerCase();
+      let filtered = allMovies;
+      if (q) filtered = filtered.filter(m => m.title.toLowerCase().includes(q) || m.description?.toLowerCase().includes(q));
+      if (activeCategory) filtered = filtered.filter(m => m.categories?.includes(activeCategory));
+      renderMovies(filtered);
+    }
+
+    function filterByCategory(cat, el) {
+      activeCategory = cat;
+      document.querySelectorAll('.filter-chips .chip').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+      filterMovies();
+    }
+  </script>
+</body>
+</html>

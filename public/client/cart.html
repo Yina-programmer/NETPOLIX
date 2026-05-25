@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carrito - NetPolix</title>
+  <link rel="icon" href="/assets/logo-netpolix.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/variables.css">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/animations.css">
+  <link rel="stylesheet" href="/css/forms.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+  <div class="app-layout">
+    <div class="sidebar" id="sidebar"></div>
+    <div class="main-content">
+      <header class="top-bar">
+        <button class="mobile-menu-btn" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+        <h2 class="top-bar-title">🛒 Carrito de Compras</h2>
+      </header>
+      <div class="page-content">
+        <div class="page-header"><h1>🛒 Mi Carrito</h1><p>Revisa y confirma tus compras y alquileres</p></div>
+
+        <div style="display:grid;grid-template-columns:1fr 340px;gap:var(--space-6);" id="cart-layout">
+          <!-- Cart Items -->
+          <div>
+            <div id="cart-items"></div>
+          </div>
+
+          <!-- Order Summary -->
+          <div>
+            <div class="card" style="position:sticky;top:calc(var(--topbar-height) + var(--space-4));">
+              <div class="card-header"><h4>💳 Resumen del Pedido</h4></div>
+              <div class="card-body">
+                <div id="order-summary"></div>
+
+                <!-- Points redemption -->
+                <div class="form-group mt-4" id="points-section" style="display:none;">
+                  <label class="form-label">⭐ Canjear Puntos</label>
+                  <div style="padding:var(--space-3);background:var(--bg-surface);border-radius:var(--radius-md);margin-bottom:var(--space-2);">
+                    <div class="flex justify-between fs-sm mb-2">
+                      <span class="text-secondary">Puntos disponibles:</span>
+                      <span class="neon-text-blue fw-bold" id="available-points">0</span>
+                    </div>
+                    <div class="input-group">
+                      <input type="number" class="form-control" id="points-input" placeholder="0" min="0" oninput="updateTotal()">
+                      <span class="input-group-text" style="border-radius:0 var(--radius-md) var(--radius-md) 0;">pts</span>
+                    </div>
+                    <p class="form-help mt-1">100 puntos = $1.00 de descuento</p>
+                  </div>
+                </div>
+
+                <div id="final-total" class="mt-4" style="padding:var(--space-4);background:var(--bg-surface);border-radius:var(--radius-md);">
+                  <div class="flex justify-between fw-bold fs-lg">
+                    <span>Total:</span>
+                    <span class="neon-text-blue" id="total-price">$0.00</span>
+                  </div>
+                  <div class="fs-xs text-muted mt-1" id="points-earned-preview"></div>
+                </div>
+
+                <button class="btn btn-primary btn-lg w-full mt-4" id="checkout-btn" onclick="checkout()">
+                  ✅ Confirmar Pedido
+                </button>
+                <a href="/client/catalog.html" class="btn btn-ghost w-full mt-2">← Seguir comprando</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/components/notifications.js"></script>
+  <script src="/js/components/sidebar.js"></script>
+  <script>
+    let cart = [];
+    let userPoints = 0;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (!AuthManager.checkAuth()) return;
+      if (!AuthManager.redirectIfNotRole(['cliente'])) return;
+      renderSidebar('cliente');
+      cart = JSON.parse(localStorage.getItem('netpolix_cart') || '[]');
+
+      try {
+        const profile = await NetPolixAPI.get('/auth/profile');
+        userPoints = profile.points || 0;
+        document.getElementById('available-points').textContent = userPoints;
+        if (userPoints > 0) document.getElementById('points-section').style.display = 'block';
+      } catch (e) {}
+
+      renderCart();
+    });
+
+    function renderCart() {
+      const el = document.getElementById('cart-items');
+      if (cart.length === 0) {
+        el.innerHTML = `
+          <div class="empty-state" style="padding:var(--space-12);">
+            <div class="empty-icon">🛒</div>
+            <h3>Tu carrito está vacío</h3>
+            <p>Agrega películas y series desde el catálogo</p>
+            <a href="/client/catalog.html" class="btn btn-primary mt-4">Ver Catálogo</a>
+          </div>`;
+        document.getElementById('checkout-btn').disabled = true;
+        document.getElementById('cart-layout').style.gridTemplateColumns = '1fr';
+        updateTotal();
+        return;
+      }
+
+      el.innerHTML = cart.map((item, i) => `
+        <div class="card mb-4 fade-in-up" style="animation-delay:${i*0.05}s">
+          <div class="card-body">
+            <div class="flex items-center gap-4">
+              <div style="width:50px;height:70px;background:var(--gradient-neon-soft);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.5rem;">${item.itemType==='movie'?'🎬':item.itemType==='series'?'📺':'📦'}</div>
+              <div style="flex:1;">
+                <div class="fw-semibold">${item.itemTitle}</div>
+                <div class="flex gap-2 mt-1">
+                  <span class="badge ${item.opType==='compra'?'badge-green':'badge-blue'}">${item.opType==='compra'?'Compra':'Alquiler'}</span>
+                  <span class="badge badge-gray">${item.itemType==='movie'?'Película':item.itemType==='series'?'Serie':'Colección'}</span>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="fw-bold fs-lg neon-text-blue">$${item.price?.toFixed(2)||'0.00'}</div>
+                <button class="btn btn-ghost btn-sm text-neon-red mt-1" onclick="removeFromCart(${i})">✕ Quitar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      updateTotal();
+    }
+
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      localStorage.setItem('netpolix_cart', JSON.stringify(cart));
+      renderCart();
+    }
+
+    function updateTotal() {
+      const subtotal = cart.reduce((sum, item) => sum + (item.price || 0), 0);
+      const pointsToRedeem = Math.min(parseInt(document.getElementById('points-input')?.value || 0), userPoints);
+      const discount = pointsToRedeem / 100;
+      const total = Math.max(0, subtotal - discount);
+      const pointsToEarn = cart.filter(i => i.opType==='compra').length * 25 + cart.filter(i => i.opType==='alquiler').length * 10;
+
+      document.getElementById('total-price').textContent = '$' + total.toFixed(2);
+
+      const summaryEl = document.getElementById('order-summary');
+      summaryEl.innerHTML = `
+        <div class="flex justify-between fs-sm mb-2"><span class="text-secondary">Subtotal:</span><span>$${subtotal.toFixed(2)}</span></div>
+        ${pointsToRedeem > 0 ? `<div class="flex justify-between fs-sm mb-2 text-success"><span>Descuento puntos (${pointsToRedeem} pts):</span><span>-$${discount.toFixed(2)}</span></div>` : ''}
+        <hr style="border-color:var(--border-color);margin:var(--space-2) 0;">
+      `;
+
+      if (cart.length > 0) {
+        document.getElementById('points-earned-preview').textContent = `Ganarás ${pointsToEarn} puntos con esta compra`;
+      }
+    }
+
+    async function checkout() {
+      if (cart.length === 0) return;
+      const btn = document.getElementById('checkout-btn');
+      btn.disabled = true;
+      btn.textContent = 'Procesando...';
+
+      const pointsToRedeem = Math.min(parseInt(document.getElementById('points-input')?.value || 0), userPoints);
+      const items = cart.map(item => ({ itemId: item.itemId, itemType: item.itemType, type: item.opType }));
+
+      try {
+        const result = await NetPolixAPI.post('/orders', { items, pointsToRedeem });
+        localStorage.removeItem('netpolix_cart');
+        cart = [];
+        showNotification(`¡Pedido confirmado! Ganaste ${result.pointsEarned} puntos. Puntos actuales: ${result.currentPoints}`, 'success', 6000);
+        setTimeout(() => window.location.href = '/client/history.html', 2000);
+      } catch (err) {
+        showNotification('Error al procesar el pedido: ' + err.message, 'error');
+        btn.disabled = false;
+        btn.textContent = '✅ Confirmar Pedido';
+      }
+    }
+  </script>
+</body>
+</html>

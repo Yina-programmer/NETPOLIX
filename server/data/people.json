@@ -1,0 +1,253 @@
+[
+  {
+    "id": "per-001",
+    "name": "Christopher Nolan",
+    "birthDate": "1970-07-30",
+    "roles": [
+      "director",
+      "productor"
+    ]
+  },
+  {
+    "id": "per-002",
+    "name": "Leonardo DiCaprio",
+    "birthDate": "1974-11-11",
+    "roles": [
+      "actor"
+    ]
+  },
+  {
+    "id": "per-003",
+    "name": "Scarlett Johansson",
+    "birthDate": "1984-11-22",
+    "roles": [
+      "actor"
+    ]
+  },
+  {
+    "id": "per-004",
+    "name": "Steven Spielberg",
+    "birthDate": "1946-12-18",
+    "roles": [
+      "director",
+      "productor"
+    ]
+  },
+  {
+    "id": "per-005",
+    "name": "Margot Robbie",
+    "birthDate": "1990-07-02",
+    "roles": [
+      "actor",
+      "productor"
+    ]
+  },
+  {
+    "id": "per-006",
+    "name": "Quentin Tarantino",
+    "birthDate": "1963-03-27",
+    "roles": [
+      "director",
+      "productor"
+    ]
+  },
+  {
+    "id": "per-007",
+    "name": "Cillian Murphy",
+    "birthDate": "1976-05-25",
+    "roles": [
+      "actor"
+    ]
+  },
+  {
+    "id": "per-008",
+    "name": "Florence Pugh",
+    "birthDate": "1996-01-03",
+    "roles": [
+      "actor"
+    ]
+  },
+  {
+    "id": "per-009",
+    "name": "Denis Villeneuve",
+    "birthDate": "1967-10-03",
+    "roles": [
+      "director"
+    ]
+  },
+  {
+    "id": "per-010",
+    "name": "Timothée Chalamet",
+    "birthDate": "1995-12-27",
+    "roles": [
+      "actor"
+    ]
+  },
+  {
+    "id": "per-011",
+    "name": "Greta Gerwig",
+    "birthDate": "1983-08-04",
+    "roles": [
+      "director",
+      "actor"
+    ]
+  },
+  {
+    "id": "per-012",
+    "name": "Robert Downey Jr.",
+    "birthDate": "1965-04-04",
+    "roles": [
+      "actor",
+      "productor"
+    ]
+  },
+  {
+    "id": "per-013",
+    "name": "Zendaya",
+    "birthDate": "1996-09-01",
+    "roles": [
+      "actor"
+    ]
+  },
+  {
+    "id": "per-014",
+    "name": "Ryan Gosling",
+    "birthDate": "1980-11-12",
+    "roles": [
+      "actor"
+    ]
+  },
+  {
+    "id": "per-015",
+    "name": "Martin Scorsese",
+    "birthDate": "1942-11-17",
+    "roles": [
+      "director",
+      "productor"
+    ]
+  },
+  {
+    "id": "per-016",
+    "name": "Emma Stone",
+    "birthDate": "1988-11-06",
+    "roles": [
+      "actor"
+    ]
+  },
+  {
+    "id": "per-017",
+    "name": "Tom Holland",
+    "birthDate": "1996-06-01",
+    "roles": [
+      "actor"
+    ]
+  },
+  {
+    "id": "per-018",
+    "name": "Bong Joon-ho",
+    "birthDate": "1969-09-14",
+    "roles": [
+      "director"
+    ]
+  },
+  {
+    "id": "per-019",
+    "name": "Ana de Armas",
+    "birthDate": "1988-04-30",
+    "roles": [
+      "actor"
+    ]
+  },
+  {
+    "id": "per-020",
+    "name": "Pedro Pascal",
+    "birthDate": "1975-04-02",
+    "roles": [
+      "actor"
+    ]
+  },
+  {
+    "id": "per-021",
+    "name": "Anya Taylor-Joy",
+    "birthDate": "1996-04-16",
+    "roles": [
+      "actor"
+    ]
+  },
+  {
+    "id": "per-022",
+    "name": "Ridley Scott",
+    "birthDate": "1937-11-30",
+    "roles": [
+      "director",
+      "productor"
+    ]
+  },
+  {
+    "id": "per-023",
+    "name": "Saoirse Ronan",
+    "birthDate": "1994-04-12",
+    "roles": [
+      "actor"
+    ]
+  },
+  {
+    "id": "per-024",
+    "name": "Jordan Peele",
+    "birthDate": "1979-02-21",
+    "roles": [
+      "director",
+      "productor"
+    ]
+  },
+  {
+    "id": "per-025",
+    "name": "Ke Huy Quan",
+    "birthDate": "1971-08-20",
+    "roles": [
+      "actor"
+    ]
+  },
+  {
+    "id": "per-026",
+    "name": "Michelle Yeoh",
+    "birthDate": "1962-08-06",
+    "roles": [
+      "actor"
+    ]
+  },
+  {
+    "id": "per-027",
+    "name": "Daniel Kwan",
+    "birthDate": "1988-02-10",
+    "roles": [
+      "director"
+    ]
+  },
+  {
+    "id": "per-028",
+    "name": "Matt Damon",
+    "birthDate": "1970-10-08",
+    "roles": [
+      "actor",
+      "productor"
+    ]
+  },
+  {
+    "id": "per-029",
+    "name": "Austin Butler",
+    "birthDate": "1991-08-17",
+    "roles": [
+      "actor"
+    ]
+  },
+  {
+    "id": "per-030",
+    "name": "Guillermo del Toro",
+    "birthDate": "1964-10-09",
+    "roles": [
+      "director",
+      "productor"
+    ]
+  }
+]

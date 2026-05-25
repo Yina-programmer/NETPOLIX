@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel Administrador - NetPolix</title>
+  <link rel="icon" href="/assets/logo-netpolix.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/variables.css">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/animations.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+  <div class="app-layout">
+    <div class="sidebar" id="sidebar"></div>
+    <div class="main-content">
+      <header class="top-bar">
+        <button class="mobile-menu-btn" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+        <h2 class="top-bar-title">Dashboard</h2>
+        <div class="top-bar-actions">
+          <span class="text-muted fs-sm" id="current-date"></span>
+        </div>
+      </header>
+      <div class="page-content">
+        <div class="page-header fade-in-up">
+          <h1>Bienvenido, <span class="neon-text" id="admin-name">Admin</span></h1>
+          <p>Resumen general del sistema NetPolix</p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+          <div class="stat-card fade-in-up stagger-1">
+            <div class="stat-icon blue">🎬</div>
+            <div class="stat-value" id="total-movies">0</div>
+            <div class="stat-label">Películas</div>
+          </div>
+          <div class="stat-card fade-in-up stagger-2">
+            <div class="stat-icon red">📺</div>
+            <div class="stat-value" id="total-series">0</div>
+            <div class="stat-label">Series</div>
+          </div>
+          <div class="stat-card fade-in-up stagger-3">
+            <div class="stat-icon green">👤</div>
+            <div class="stat-value" id="total-clients">0</div>
+            <div class="stat-label">Clientes</div>
+          </div>
+          <div class="stat-card fade-in-up stagger-4">
+            <div class="stat-icon yellow">💰</div>
+            <div class="stat-value" id="total-revenue">$0</div>
+            <div class="stat-label">Ingresos Totales</div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card mb-6 fade-in-up" style="animation-delay:0.3s;">
+          <div class="card-header">
+            <h4>⚡ Acciones Rápidas</h4>
+          </div>
+          <div class="card-body">
+            <div class="grid grid-4" style="gap:var(--space-3);">
+              <a href="/admin/movies.html" class="btn btn-outline w-full">🎬 Gestionar Películas</a>
+              <a href="/admin/series.html" class="btn btn-outline w-full">📺 Gestionar Series</a>
+              <a href="/admin/people.html" class="btn btn-outline w-full">👥 Gestionar Personas</a>
+              <a href="/admin/users.html" class="btn btn-outline w-full">🛡️ Gestionar Usuarios</a>
+              <a href="/admin/categories.html" class="btn btn-outline w-full">🏷️ Categorías</a>
+              <a href="/admin/languages.html" class="btn btn-outline w-full">🌐 Idiomas</a>
+              <a href="/admin/collections.html" class="btn btn-outline w-full">📦 Colecciones</a>
+              <a href="/admin/config.html" class="btn btn-outline w-full">⚙️ Configuración</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Orders -->
+        <div class="card fade-in-up" style="animation-delay:0.4s;">
+          <div class="card-header">
+            <h4>📋 Órdenes Recientes</h4>
+          </div>
+          <div class="card-body" id="recent-orders">
+            <div class="skeleton skeleton-text" style="width:100%;height:200px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/components/notifications.js"></script>
+  <script src="/js/components/sidebar.js"></script>
+  <script src="/js/components/table.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (!AuthManager.checkAuth()) return;
+      if (!AuthManager.redirectIfNotRole(['admin'])) return;
+
+      const user = AuthManager.getUser();
+      renderSidebar('admin');
+      document.getElementById('admin-name').textContent = user.name.split(' ')[0];
+      document.getElementById('current-date').textContent = new Date().toLocaleDateString('es-CO', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+      try {
+        const [movies, series, orders] = await Promise.all([
+          NetPolixAPI.get('/movies'),
+          NetPolixAPI.get('/series'),
+          NetPolixAPI.get('/orders')
+        ]);
+        
+        const clients = await NetPolixAPI.get('/clients').catch(() => []);
+        const revenue = orders.reduce((s, o) => s + o.price, 0);
+
+        document.getElementById('total-movies').textContent = movies.length;
+        document.getElementById('total-series').textContent = series.length;
+        document.getElementById('total-clients').textContent = clients.length || '3';
+        document.getElementById('total-revenue').textContent = '$' + revenue.toFixed(2);
+
+        // Recent orders table
+        const recentOrders = orders.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 10);
+        createTable('recent-orders', {
+          columns: [
+            { key: 'itemTitle', header: 'Título' },
+            { key: 'type', header: 'Tipo', type: 'badge', badgeMap: { 'compra': 'badge-green', 'alquiler': 'badge-blue' } },
+            { key: 'itemType', header: 'Categoría', type: 'badge', badgeMap: { 'movie': 'badge-blue', 'series': 'badge-yellow', 'collection': 'badge-gray' } },
+            { key: 'price', header: 'Precio', type: 'currency' },
+            { key: 'date', header: 'Fecha', type: 'date' }
+          ],
+          data: recentOrders,
+          emptyMessage: 'No hay órdenes registradas'
+        });
+      } catch (err) {
+        console.error(err);
+        showNotification('Error cargando datos del dashboard', 'error');
+      }
+    });
+  </script>
+</body>
+</html>

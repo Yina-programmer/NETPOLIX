@@ -1,0 +1,65 @@
+[
+  {
+    "id": "usr-admin-001",
+    "name": "Carlos Administrador",
+    "documentId": "1001001001",
+    "email": "admin@netpolix.com",
+    "password": "$2a$10$vImrAebxauEoN0CROhai9uMKFv3eflVtyQJw/08N3BdSS.W4Hs2zC",
+    "role": "admin",
+    "createdAt": "2024-01-15T08:00:00Z",
+    "active": true
+  },
+  {
+    "id": "usr-mgr-001",
+    "name": "María Gerente López",
+    "documentId": "2002002002",
+    "email": "gerente@netpolix.com",
+    "password": "$2a$10$FRuATDokZGvSgx3faG.MfeReqvVNLvdtX32QjJofP325ccfbU8lm.",
+    "role": "gerente",
+    "createdAt": "2024-01-16T09:00:00Z",
+    "active": true
+  },
+  {
+    "id": "usr-cli-001",
+    "name": "Juan Cliente Pérez",
+    "documentId": "3003003003",
+    "email": "cliente@netpolix.com",
+    "password": "$2a$10$g5hyKbT6UAzKAscosG10FeUXIgkXq/EACyIb0nmReRha0tVVTDUtO",
+    "role": "cliente",
+    "registrationDate": "2024-02-01T10:00:00Z",
+    "points": 35,
+    "referralCode": "JUAN3003",
+    "referredBy": null,
+    "penalized": false,
+    "active": true,
+    "penalizedReason": "Acción del administrador"
+  },
+  {
+    "id": "usr-cli-002",
+    "name": "Ana Sofía Martínez",
+    "documentId": "4004004004",
+    "email": "ana@netpolix.com",
+    "password": "$2a$10$g5hyKbT6UAzKAscosG10FeUXIgkXq/EACyIb0nmReRha0tVVTDUtO",
+    "role": "cliente",
+    "registrationDate": "2024-03-15T14:30:00Z",
+    "points": 180,
+    "referralCode": "ANAS4004",
+    "referredBy": "3003003003",
+    "penalized": false,
+    "active": true
+  },
+  {
+    "id": "usr-cli-003",
+    "name": "Pedro García Ruiz",
+    "documentId": "5005005005",
+    "email": "pedro@netpolix.com",
+    "password": "$2a$10$g5hyKbT6UAzKAscosG10FeUXIgkXq/EACyIb0nmReRha0tVVTDUtO",
+    "role": "cliente",
+    "registrationDate": "2024-04-20T11:00:00Z",
+    "points": 75,
+    "referralCode": "PEDR5005",
+    "referredBy": null,
+    "penalized": false,
+    "active": true
+  }
+]

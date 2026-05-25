@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Idiomas - NetPolix Admin</title>
+  <link rel="icon" href="/assets/logo-netpolix.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/variables.css"><link rel="stylesheet" href="/css/base.css"><link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/layout.css"><link rel="stylesheet" href="/css/animations.css"><link rel="stylesheet" href="/css/forms.css"><link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+  <div class="app-layout">
+    <div class="sidebar" id="sidebar"></div>
+    <div class="main-content">
+      <header class="top-bar">
+        <button class="mobile-menu-btn" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+        <h2 class="top-bar-title">Idiomas</h2>
+      </header>
+      <div class="page-content">
+        <div class="page-header"><h1>🌐 Idiomas</h1><p>Idiomas disponibles para el catálogo</p></div>
+        <div class="toolbar">
+          <div class="toolbar-left"></div>
+          <div class="toolbar-right"><button class="btn btn-primary" onclick="openForm()">+ Nuevo Idioma</button></div>
+        </div>
+        <div id="data-table" class="fade-in-up"></div>
+      </div>
+    </div>
+  </div>
+  <script src="/js/api.js"></script><script src="/js/auth.js"></script><script src="/js/components/notifications.js"></script>
+  <script src="/js/components/sidebar.js"></script><script src="/js/components/modal.js"></script><script src="/js/components/table.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!AuthManager.checkAuth() || !AuthManager.redirectIfNotRole(['admin'])) return;
+      renderSidebar('admin'); loadData();
+    });
+    async function loadData() {
+      try {
+        const data = await NetPolixAPI.get('/languages');
+        createTable('data-table', {
+          columns: [
+            { key: 'name', header: 'Idioma', render: v => `<span class="fw-medium">${v}</span>` },
+            { key: 'code', header: 'Código', render: v => v ? `<span class="badge badge-blue">${v}</span>` : '—' }
+          ], data, emptyMessage: 'No hay idiomas',
+          actions: [
+            { name: 'edit', icon: '✏️', class: 'btn-ghost btn-sm', onClick: r => openForm(r) },
+            { name: 'del', icon: '🗑️', class: 'btn-ghost btn-sm', onClick: r => confirmModal('Eliminar', `¿Eliminar "${r.name}"?`, async () => { await NetPolixAPI.delete('/languages/'+r.id); showNotification('Eliminado','success'); loadData(); }) }
+          ]
+        });
+      } catch (e) { showNotification(e.message, 'error'); }
+    }
+    function openForm(item = null) {
+      showModal(item ? 'Editar Idioma' : 'Nuevo Idioma', `
+        <form id="ef">
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Nombre *</label><input type="text" class="form-control" name="name" value="${item?.name || ''}" required></div>
+            <div class="form-group"><label class="form-label">Código ISO</label><input type="text" class="form-control" name="code" value="${item?.code || ''}" placeholder="ej: ES, EN"></div>
+          </div>
+        </form>`,
+        `<button class="btn btn-ghost" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="save('${item?.id||''}')">Guardar</button>`);
+    }
+    async function save(id) {
+      const fd = new FormData(document.getElementById('ef'));
+      const d = { name: fd.get('name'), code: fd.get('code') };
+      try { if (id) await NetPolixAPI.put('/languages/'+id, d); else await NetPolixAPI.post('/languages', d);
+        showNotification('Guardado', 'success'); closeModal(); loadData();
+      } catch (e) { showNotification(e.message, 'error'); }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clientes - NetPolix Admin</title>
+  <link rel="icon" href="/assets/logo-netpolix.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/variables.css"><link rel="stylesheet" href="/css/base.css"><link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/layout.css"><link rel="stylesheet" href="/css/animations.css"><link rel="stylesheet" href="/css/forms.css"><link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+  <div class="app-layout">
+    <div class="sidebar" id="sidebar"></div>
+    <div class="main-content">
+      <header class="top-bar">
+        <button class="mobile-menu-btn" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+        <h2 class="top-bar-title">Gestión de Clientes</h2>
+      </header>
+      <div class="page-content">
+        <div class="page-header"><h1>👤 Clientes</h1><p>Consulta y gestiona los clientes registrados</p></div>
+        <div class="toolbar">
+          <div class="toolbar-left">
+            <div class="search-bar" style="min-width:260px;"><span class="search-icon">🔍</span><input type="text" id="search-input" placeholder="Buscar por nombre, email o cédula..." oninput="filterClients()"></div>
+            <select class="form-select" id="filter-status" style="width:160px;" onchange="filterClients()">
+              <option value="">Todos</option><option value="active">Activos</option><option value="penalized">Penalizados</option>
+            </select>
+          </div>
+        </div>
+        <div id="clients-table" class="fade-in-up"></div>
+      </div>
+    </div>
+  </div>
+  <script src="/js/api.js"></script><script src="/js/auth.js"></script><script src="/js/components/notifications.js"></script>
+  <script src="/js/components/sidebar.js"></script><script src="/js/components/modal.js"></script><script src="/js/components/table.js"></script>
+  <script>
+    let allClients = [];
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (!AuthManager.checkAuth()) return;
+      if (!AuthManager.redirectIfNotRole(['admin'])) return;
+      renderSidebar('admin');
+      try {
+        allClients = await NetPolixAPI.get('/clients');
+        filterClients();
+      } catch (err) { showNotification('Error cargando clientes: ' + err.message, 'error'); }
+    });
+
+    function filterClients() {
+      const q = document.getElementById('search-input').value.toLowerCase();
+      const status = document.getElementById('filter-status').value;
+      let data = allClients;
+      if (q) data = data.filter(c => c.name.toLowerCase().includes(q) || c.email.toLowerCase().includes(q) || c.documentId?.includes(q));
+      if (status === 'active') data = data.filter(c => !c.penalized);
+      if (status === 'penalized') data = data.filter(c => c.penalized);
+      
+      createTable('clients-table', {
+        columns: [
+          { key: 'name', header: 'Cliente', render: (v, row) => `<div class="flex items-center gap-3"><div class="avatar avatar-sm">${(v||'?').split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase()}</div><div><div class="fw-medium">${v}</div><div class="fs-xs text-muted">${row.email}</div></div></div>` },
+          { key: 'documentId', header: 'Cédula' },
+          { key: 'referralCode', header: 'Cód. Referido', render: v => `<span class="badge badge-gray">${v || '-'}</span>` },
+          { key: 'points', header: 'Puntos', render: v => `<span class="neon-text-blue fw-bold">⭐ ${v || 0}</span>` },
+          { key: 'penalized', header: 'Estado', render: v => v ? '<span class="badge badge-red">⚠️ Penalizado</span>' : '<span class="badge badge-green">✓ Activo</span>' },
+          { key: 'penalizedReason', header: 'Motivo penalización', render: v => v ? `<span class="text-muted fs-xs">${v}</span>` : '<span class="text-muted">-</span>' },
+          { key: 'registrationDate', header: 'Registro', type: 'date' }
+        ],
+        data,
+        emptyMessage: 'No hay clientes registrados',
+        actions: [
+          { name: 'penalize', label: '', icon: '⚠️', class: 'btn-ghost btn-sm',
+            render: (row) => row.penalized ? '✅ Despenalizar' : '⚠️ Penalizar',
+            onClick: (row) => {
+              const msg = row.penalized
+                ? `¿Deseas despenalizar a "${row.name}"?`
+                : `¿Deseas penalizar a "${row.name}"?\n\nMotivo: tarjeta de crédito vencida o robada.`;
+              confirmModal(row.penalized ? 'Despenalizar Cliente' : 'Penalizar Cliente', msg, async () => {
+                try {
+                  await NetPolixAPI.put(`/clients/${row.id}/penalize`, { reason: 'Tarjeta de crédito vencida o robada' });
+                  const idx = allClients.findIndex(c => c.id === row.id);
+                  allClients[idx].penalized = !allClients[idx].penalized;
+                  showNotification(`Cliente ${row.penalized ? 'despenalizado' : 'penalizado'} correctamente`, 'success');
+                  filterClients();
+                } catch (err) { showNotification(err.message, 'error'); }
+              });
+            }
+          }
+        ]
+      });
+    }
+  </script>
+</body>
+</html>

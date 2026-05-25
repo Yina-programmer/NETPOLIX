@@ -1,0 +1,134 @@
+/* ═══════════════════════════════════════════════════════
+   NetPolix Design System - CSS Variables & Tokens
+   Neon Blue (#00D4FF) + Neon Red (#FF0054) Aesthetic
+   ═══════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Primary Neon Colors ── */
+  --neon-blue: #00D4FF;
+  --neon-blue-light: #66E5FF;
+  --neon-blue-dark: #0099CC;
+  --neon-blue-rgb: 0, 212, 255;
+  --neon-blue-glow: 0 0 20px rgba(0, 212, 255, 0.5), 0 0 40px rgba(0, 212, 255, 0.2);
+  --neon-blue-glow-intense: 0 0 10px rgba(0, 212, 255, 0.6), 0 0 30px rgba(0, 212, 255, 0.4), 0 0 60px rgba(0, 212, 255, 0.2);
+
+  --neon-red: #FF0054;
+  --neon-red-light: #FF4D8A;
+  --neon-red-dark: #CC0044;
+  --neon-red-rgb: 255, 0, 84;
+  --neon-red-glow: 0 0 20px rgba(255, 0, 84, 0.5), 0 0 40px rgba(255, 0, 84, 0.2);
+  --neon-red-glow-intense: 0 0 10px rgba(255, 0, 84, 0.6), 0 0 30px rgba(255, 0, 84, 0.4), 0 0 60px rgba(255, 0, 84, 0.2);
+
+  /* ── Backgrounds ── */
+  --bg-dark: #0A0E17;
+  --bg-darker: #060912;
+  --bg-card: #111827;
+  --bg-surface: #1A1F2E;
+  --bg-surface-hover: #232A3E;
+  --bg-elevated: #1E2536;
+  --bg-input: #0D1220;
+  --bg-glass: rgba(17, 24, 39, 0.7);
+  --bg-glass-light: rgba(26, 31, 46, 0.5);
+
+  /* ── Text Colors ── */
+  --text-primary: #F0F4FF;
+  --text-secondary: #8892A8;
+  --text-muted: #5A6478;
+  --text-accent: var(--neon-blue);
+  --text-danger: var(--neon-red);
+
+  /* ── Borders ── */
+  --border-color: rgba(255, 255, 255, 0.06);
+  --border-color-hover: rgba(255, 255, 255, 0.12);
+  --border-neon-blue: rgba(0, 212, 255, 0.3);
+  --border-neon-red: rgba(255, 0, 84, 0.3);
+
+  /* ── Gradients ── */
+  --gradient-neon: linear-gradient(135deg, #00D4FF, #FF0054);
+  --gradient-neon-soft: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(255, 0, 84, 0.15));
+  --gradient-neon-vertical: linear-gradient(180deg, #00D4FF, #FF0054);
+  --gradient-dark: linear-gradient(180deg, #0A0E17, #111827);
+  --gradient-card: linear-gradient(145deg, rgba(17, 24, 39, 0.9), rgba(26, 31, 46, 0.9));
+  --gradient-sidebar: linear-gradient(180deg, rgba(10, 14, 23, 0.95), rgba(17, 24, 39, 0.95));
+  --gradient-blue-btn: linear-gradient(135deg, #00D4FF, #0099CC);
+  --gradient-red-btn: linear-gradient(135deg, #FF0054, #CC0044);
+  --gradient-success: linear-gradient(135deg, #00FF88, #00CC6A);
+  --gradient-warning: linear-gradient(135deg, #FFB800, #FF8C00);
+
+  /* ── Shadows ── */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.6);
+  --shadow-neon-blue: 0 4px 20px rgba(0, 212, 255, 0.25);
+  --shadow-neon-red: 0 4px 20px rgba(255, 0, 84, 0.25);
+
+  /* ── Typography ── */
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-heading: 'Outfit', 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.875rem;
+  --fs-base: 1rem;
+  --fs-md: 1.125rem;
+  --fs-lg: 1.25rem;
+  --fs-xl: 1.5rem;
+  --fs-2xl: 1.875rem;
+  --fs-3xl: 2.25rem;
+  --fs-4xl: 3rem;
+  --fs-5xl: 3.75rem;
+
+  --fw-light: 300;
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+  --fw-extrabold: 800;
+
+  /* ── Spacing ── */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  /* ── Border Radius ── */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  /* ── Z-Index ── */
+  --z-sidebar: 100;
+  --z-topbar: 90;
+  --z-modal-overlay: 200;
+  --z-modal: 210;
+  --z-notification: 300;
+  --z-tooltip: 400;
+
+  /* ── Transitions ── */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 400ms ease;
+  --transition-spring: 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ── Layout ── */
+  --sidebar-width: 280px;
+  --sidebar-collapsed: 72px;
+  --topbar-height: 64px;
+  --content-max-width: 1400px;
+}
+
+/* ── Dark mode media query (default is dark) ── */
+@media (prefers-color-scheme: light) {
+  :root {
+    /* Keep dark mode - NetPolix is always dark */
+  }
+}

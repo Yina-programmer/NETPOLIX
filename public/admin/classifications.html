@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clasificaciones - NetPolix Admin</title>
+  <link rel="icon" href="/assets/logo-netpolix.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/variables.css"><link rel="stylesheet" href="/css/base.css"><link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/layout.css"><link rel="stylesheet" href="/css/animations.css"><link rel="stylesheet" href="/css/forms.css"><link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+  <div class="app-layout">
+    <div class="sidebar" id="sidebar"></div>
+    <div class="main-content">
+      <header class="top-bar">
+        <button class="mobile-menu-btn" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+        <h2 class="top-bar-title">Clasificaciones</h2>
+      </header>
+      <div class="page-content">
+        <div class="page-header"><h1>🔒 Clasificaciones</h1><p>Clasificaciones por edad del contenido</p></div>
+        <div class="toolbar">
+          <div class="toolbar-left"></div>
+          <div class="toolbar-right"><button class="btn btn-primary" onclick="openForm()">+ Nueva Clasificación</button></div>
+        </div>
+        <div id="data-table" class="fade-in-up"></div>
+      </div>
+    </div>
+  </div>
+  <script src="/js/api.js"></script><script src="/js/auth.js"></script><script src="/js/components/notifications.js"></script>
+  <script src="/js/components/sidebar.js"></script><script src="/js/components/modal.js"></script><script src="/js/components/table.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!AuthManager.checkAuth() || !AuthManager.redirectIfNotRole(['admin'])) return;
+      renderSidebar('admin'); loadData();
+    });
+    async function loadData() {
+      try {
+        const data = await NetPolixAPI.get('/classifications');
+        createTable('data-table', {
+          columns: [
+            { key: 'type', header: 'Clasificación', render: v => {
+              const colors = {'G':'badge-green','PG':'badge-blue','PG-13':'badge-yellow','R':'badge-red','NC-17':'badge-red'};
+              return `<span class="badge ${colors[v]||'badge-gray'}">${v}</span>`;
+            }},
+            { key: 'description', header: 'Descripción' }
+          ], data, emptyMessage: 'No hay clasificaciones',
+          actions: [
+            { name: 'edit', icon: '✏️', class: 'btn-ghost btn-sm', onClick: r => openForm(r) },
+            { name: 'del', icon: '🗑️', class: 'btn-ghost btn-sm', onClick: r => confirmModal('Eliminar', `¿Eliminar "${r.type}"?`, async () => { await NetPolixAPI.delete('/classifications/'+r.id); showNotification('Eliminada','success'); loadData(); }) }
+          ]
+        });
+      } catch (e) { showNotification(e.message, 'error'); }
+    }
+    function openForm(item = null) {
+      showModal(item ? 'Editar Clasificación' : 'Nueva Clasificación', `
+        <form id="ef">
+          <div class="form-group"><label class="form-label">Tipo *</label><input type="text" class="form-control" name="type" value="${item?.type || ''}" required placeholder="G, PG, PG-13, R, NC-17"></div>
+          <div class="form-group"><label class="form-label">Descripción *</label><textarea class="form-control" name="description" rows="2" required>${item?.description || ''}</textarea></div>
+        </form>`,
+        `<button class="btn btn-ghost" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="save('${item?.id||''}')">Guardar</button>`);
+    }
+    async function save(id) {
+      const fd = new FormData(document.getElementById('ef'));
+      const d = { type: fd.get('type'), description: fd.get('description') };
+      try { if (id) await NetPolixAPI.put('/classifications/'+id, d); else await NetPolixAPI.post('/classifications', d);
+        showNotification('Guardado', 'success'); closeModal(); loadData();
+      } catch (e) { showNotification(e.message, 'error'); }
+    }
+  </script>
+</body>
+</html>

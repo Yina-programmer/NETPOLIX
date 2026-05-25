@@ -1,0 +1,11 @@
+[
+  { "id": "lang-001", "name": "Inglés", "code": "en" },
+  { "id": "lang-002", "name": "Español", "code": "es" },
+  { "id": "lang-003", "name": "Portugués", "code": "pt" },
+  { "id": "lang-004", "name": "Alemán", "code": "de" },
+  { "id": "lang-005", "name": "Japonés", "code": "ja" },
+  { "id": "lang-006", "name": "Francés", "code": "fr" },
+  { "id": "lang-007", "name": "Italiano", "code": "it" },
+  { "id": "lang-008", "name": "Ruso", "code": "ru" },
+  { "id": "lang-009", "name": "Chino", "code": "zh" }
+]

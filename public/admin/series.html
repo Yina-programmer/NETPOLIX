@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Series - NetPolix Admin</title>
+  <link rel="icon" href="/assets/logo-netpolix.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/variables.css"><link rel="stylesheet" href="/css/base.css"><link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/layout.css"><link rel="stylesheet" href="/css/animations.css"><link rel="stylesheet" href="/css/forms.css"><link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+  <div class="app-layout">
+    <div class="sidebar" id="sidebar"></div>
+    <div class="main-content">
+      <header class="top-bar">
+        <button class="mobile-menu-btn" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+        <h2 class="top-bar-title">Gestión de Series</h2>
+      </header>
+      <div class="page-content">
+        <div class="page-header"><h1>📺 Series</h1><p>Administra el catálogo de series</p></div>
+        <div class="toolbar">
+          <div class="toolbar-left"><div class="search-bar" style="min-width:260px;"><span class="search-icon">🔍</span><input type="text" id="search-input" placeholder="Buscar series..." oninput="loadSeries()"></div></div>
+          <div class="toolbar-right"><button class="btn btn-primary" onclick="openForm()">+ Nueva Serie</button></div>
+        </div>
+        <div id="series-table" class="fade-in-up"></div>
+      </div>
+    </div>
+  </div>
+  <script src="/js/api.js"></script><script src="/js/auth.js"></script><script src="/js/components/notifications.js"></script>
+  <script src="/js/components/sidebar.js"></script><script src="/js/components/modal.js"></script><script src="/js/components/table.js"></script>
+  <script>
+    let categories=[], languages=[], classifications=[];
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (!AuthManager.checkAuth()) return;
+      if (!AuthManager.redirectIfNotRole(['admin'])) return;
+      renderSidebar('admin');
+      [categories,languages,classifications] = await Promise.all([NetPolixAPI.get('/categories'),NetPolixAPI.get('/languages'),NetPolixAPI.get('/classifications')]);
+      loadSeries();
+    });
+    async function loadSeries() {
+      const q = document.getElementById('search-input').value;
+      try {
+        const data = await NetPolixAPI.get('/series'+(q?`?search=${encodeURIComponent(q)}`:''));
+        createTable('series-table', {
+          columns: [
+            { key:'imageUrl', header:'', type:'image' },
+            { key:'title', header:'Título' },
+            { key:'seasons', header:'Temporadas', render:v=>v||'-' },
+            { key:'episodes', header:'Episodios', render:v=>v||'-' },
+            { key:'categories', header:'Categorías', type:'array' },
+            { key:'salePrice', header:'Venta', type:'currency' },
+            { key:'rentalPrice', header:'Alquiler', type:'currency' }
+          ],
+          data, emptyMessage:'No hay series registradas',
+          actions:[
+            { name:'edit', icon:'✏️', class:'btn-ghost btn-sm', onClick:r=>openForm(r) },
+            { name:'del', icon:'🗑️', class:'btn-ghost btn-sm', onClick:r=>confirmModal('Eliminar',`¿Eliminar "${r.title}"?`,async()=>{ await NetPolixAPI.delete('/series/'+r.id); showNotification('Eliminado','success'); loadSeries(); }) }
+          ]
+        });
+      } catch(e){ showNotification('Error: '+e.message,'error'); }
+    }
+    function openForm(s=null) {
+      const catOpts = categories.map(c=>`<label class="form-check"><input type="checkbox" name="categories" value="${c.name}" ${s?.categories?.includes(c.name)?'checked':''}><span class="form-check-label">${c.name}</span></label>`).join('');
+      showModal(s?'Editar Serie':'Nueva Serie', `
+        <form id="sf">
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">ISAN *</label><input type="text" class="form-control" name="isan" value="${s?.isan||''}" required></div>
+            <div class="form-group"><label class="form-label">Título *</label><input type="text" class="form-control" name="title" value="${s?.title||''}" required></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Temporadas</label><input type="number" class="form-control" name="seasons" value="${s?.seasons||''}" min="1"></div>
+            <div class="form-group"><label class="form-label">Episodios</label><input type="number" class="form-control" name="episodes" value="${s?.episodes||''}" min="1"></div>
+          </div>
+          <div class="form-group"><label class="form-label">Categorías</label><div class="form-multi-select">${catOpts}</div></div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Precio Venta ($)</label><input type="number" class="form-control" name="salePrice" value="${s?.salePrice||''}" step="0.01" min="0"></div>
+            <div class="form-group"><label class="form-label">Precio Alquiler ($)</label><input type="number" class="form-control" name="rentalPrice" value="${s?.rentalPrice||''}" step="0.01" min="0"></div>
+          </div>
+          <div class="form-group"><label class="form-label">URL Imagen</label><input type="url" class="form-control" name="imageUrl" value="${s?.imageUrl||''}"></div>
+          <div class="form-group"><label class="form-label">Descripción</label><textarea class="form-control" name="description" rows="2">${s?.description||''}</textarea></div>
+        </form>`,
+        `<button class="btn btn-ghost" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="saveSeries('${s?.id||''}')">Guardar</button>`,
+        { size:'lg' }
+      );
+    }
+    async function saveSeries(id) {
+      const form=document.getElementById('sf'); const fd=new FormData(form);
+      const cats=[...form.querySelectorAll('input[name="categories"]:checked')].map(cb=>cb.value);
+      const data={ isan:fd.get('isan'), title:fd.get('title'), seasons:parseInt(fd.get('seasons'))||null, episodes:parseInt(fd.get('episodes'))||null, categories:cats, salePrice:parseFloat(fd.get('salePrice'))||0, rentalPrice:parseFloat(fd.get('rentalPrice'))||0, imageUrl:fd.get('imageUrl'), description:fd.get('description') };
+      try {
+        if(id) await NetPolixAPI.put('/series/'+id,data); else await NetPolixAPI.post('/series',data);
+        showNotification('Serie guardada','success'); closeModal(); loadSeries();
+      } catch(e){ showNotification(e.message,'error'); }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+[
+  {
+    "id": "col-001", "isan": "ISAN-COL-001", "title": "Colección Nolan", "volume": 1,
+    "videos": ["mov-001", "mov-005", "mov-009"],
+    "salePrice": 39.99, "rentalPrice": 14.99,
+    "description": "Las mejores películas de Christopher Nolan reunidas en una colección épica.",
+    "createdAt": "2024-03-01T10:00:00Z", "active": true
+  },
+  {
+    "id": "col-002", "isan": "ISAN-COL-002", "title": "Clásicos del Cine", "volume": 1,
+    "videos": ["mov-010", "mov-017"],
+    "salePrice": 24.99, "rentalPrice": 9.99,
+    "description": "Las películas que definieron el cine moderno, reunidas en una colección imprescindible.",
+    "createdAt": "2024-03-05T10:00:00Z", "active": true
+  },
+  {
+    "id": "col-003", "isan": "ISAN-COL-003", "title": "Sci-Fi Essentials", "volume": 1,
+    "videos": ["mov-003", "mov-016", "mov-020"],
+    "salePrice": 44.99, "rentalPrice": 16.99,
+    "description": "Lo mejor de la ciencia ficción contemporánea en una sola colección.",
+    "createdAt": "2024-04-01T10:00:00Z", "active": true
+  }
+]

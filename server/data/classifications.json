@@ -1,0 +1,7 @@
+[
+  { "id": "cls-001", "type": "G", "description": "Audiencia general. Apta para todas las edades. Sin contenido ofensivo." },
+  { "id": "cls-002", "type": "PG", "description": "Guía parental sugerida. Puede contener material no apto para niños pequeños." },
+  { "id": "cls-003", "type": "PG-13", "description": "Advertencia especial para padres. Puede contener material inapropiado para menores de 13 años." },
+  { "id": "cls-004", "type": "R", "description": "Restringida. Menores de 17 años requieren acompañamiento de un adulto." },
+  { "id": "cls-005", "type": "NC-17", "description": "Solo adultos. No apta para menores de 17 años bajo ninguna circunstancia." }
+]

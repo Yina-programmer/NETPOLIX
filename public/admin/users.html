@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Usuarios del Sistema - NetPolix</title>
+  <link rel="icon" href="/assets/logo-netpolix.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/variables.css"><link rel="stylesheet" href="/css/base.css"><link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/layout.css"><link rel="stylesheet" href="/css/animations.css"><link rel="stylesheet" href="/css/forms.css"><link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+  <div class="app-layout">
+    <div class="sidebar" id="sidebar"></div>
+    <div class="main-content">
+      <header class="top-bar">
+        <button class="mobile-menu-btn" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+        <h2 class="top-bar-title">Usuarios del Sistema</h2>
+      </header>
+      <div class="page-content">
+        <div class="page-header"><h1>🛡️ Usuarios</h1><p>Administradores y Gerentes del sistema</p></div>
+        <div class="toolbar">
+          <div class="toolbar-left"><div class="search-bar" style="min-width:260px;"><span class="search-icon">🔍</span><input type="text" id="search-input" placeholder="Buscar usuarios..." oninput="loadUsers()"></div></div>
+          <div class="toolbar-right"><button class="btn btn-primary" onclick="openUserForm()">+ Nuevo Usuario</button></div>
+        </div>
+        <div id="users-table" class="fade-in-up"></div>
+      </div>
+    </div>
+  </div>
+  <script src="/js/api.js"></script><script src="/js/auth.js"></script><script src="/js/components/notifications.js"></script>
+  <script src="/js/components/sidebar.js"></script><script src="/js/components/modal.js"></script><script src="/js/components/table.js"></script>
+  <script>
+    let users = [];
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (!AuthManager.checkAuth()) return;
+      if (!AuthManager.redirectIfNotRole(['admin'])) return;
+      renderSidebar('admin');
+      loadUsers();
+    });
+
+    async function loadUsers() {
+      try {
+        // Users are stored alongside clients; filter by role
+        const clients = await NetPolixAPI.get('/clients');
+        // For admin/gerente, we cannot list via API directly (only clients endpoint exists)
+        // Use clients as placeholder; in real scenario admin would see all
+        const q = document.getElementById('search-input').value.toLowerCase();
+        users = clients.filter(u => !q || u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q));
+        renderUsersTable(users);
+      } catch (err) { showNotification('Error cargando usuarios: ' + err.message, 'error'); }
+    }
+
+    function renderUsersTable(data) {
+      createTable('users-table', {
+        columns: [
+          { key: 'name', header: 'Nombre', render: (v, row) => `<div class="flex items-center gap-3"><div class="avatar avatar-sm">${(v||'?').split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase()}</div><div><div class="fw-medium">${v}</div><div class="fs-xs text-muted">${row.email}</div></div></div>` },
+          { key: 'documentId', header: 'Documento' },
+          { key: 'role', header: 'Rol', type: 'badge', badgeMap: { admin:'badge-red', gerente:'badge-green', cliente:'badge-blue' } },
+          { key: 'penalized', header: 'Estado', render: v => v ? '<span class="badge badge-red">Penalizado</span>' : '<span class="badge badge-green">Activo</span>' },
+          { key: 'points', header: 'Puntos', render: v => `<span class="neon-text-blue fw-medium">⭐ ${v || 0}</span>` },
+          { key: 'registrationDate', header: 'Registro', type: 'date' }
+        ],
+        data,
+        emptyMessage: 'No hay clientes registrados',
+        actions: [
+          { name: 'penalize', label: 'Penalizar/Despenalizar', icon: '⚠️', class: 'btn-ghost btn-sm', onClick: (row) => togglePenalize(row) }
+        ]
+      });
+    }
+
+    function openUserForm() {
+      showModal('Nuevo Usuario Admin/Gerente', `
+        <form id="user-form">
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Nombre</label><input type="text" class="form-control" name="name" required></div>
+            <div class="form-group"><label class="form-label">Documento</label><input type="text" class="form-control" name="documentId" required></div>
+          </div>
+          <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-control" name="email" required></div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Rol</label><select class="form-select" name="role"><option value="gerente">Gerente</option><option value="admin">Admin</option></select></div>
+            <div class="form-group"><label class="form-label">Contraseña</label><input type="password" class="form-control" name="password" required minlength="7" maxlength="15"></div>
+          </div>
+        </form>`,
+        `<button class="btn btn-ghost" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="createUser()">Crear</button>`
+      );
+    }
+
+    async function createUser() {
+      const form = document.getElementById('user-form');
+      const fd = new FormData(form);
+      try {
+        await NetPolixAPI.post('/auth/register', { name: fd.get('name'), documentId: fd.get('documentId'), email: fd.get('email'), password: fd.get('password') });
+        showNotification('Usuario creado (como cliente). Cambio de rol requiere ajuste manual.', 'info', 6000);
+        closeModal(); loadUsers();
+      } catch (err) { showNotification(err.message, 'error'); }
+    }
+
+    async function togglePenalize(user) {
+      try {
+        await NetPolixAPI.put(`/clients/${user.id}/penalize`, { reason: 'Acción del administrador' });
+        showNotification(`Usuario ${user.penalized ? 'despenalizado' : 'penalizado'} correctamente`, 'success');
+        loadUsers();
+      } catch (err) { showNotification(err.message, 'error'); }
+    }
+  </script>
+</body>
+</html>

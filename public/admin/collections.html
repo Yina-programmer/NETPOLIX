@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Colecciones - NetPolix Admin</title>
+  <link rel="icon" href="/assets/logo-netpolix.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/variables.css"><link rel="stylesheet" href="/css/base.css"><link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/layout.css"><link rel="stylesheet" href="/css/animations.css"><link rel="stylesheet" href="/css/forms.css"><link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+  <div class="app-layout">
+    <div class="sidebar" id="sidebar"></div>
+    <div class="main-content">
+      <header class="top-bar">
+        <button class="mobile-menu-btn" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+        <h2 class="top-bar-title">Colecciones</h2>
+      </header>
+      <div class="page-content">
+        <div class="page-header"><h1>📦 Colecciones</h1><p>Agrupa películas y series en colecciones con precio especial</p></div>
+        <div class="toolbar">
+          <div class="toolbar-left"></div>
+          <div class="toolbar-right"><button class="btn btn-primary" onclick="openForm()">+ Nueva Colección</button></div>
+        </div>
+        <div id="data-table" class="fade-in-up"></div>
+      </div>
+    </div>
+  </div>
+  <script src="/js/api.js"></script><script src="/js/auth.js"></script><script src="/js/components/notifications.js"></script>
+  <script src="/js/components/sidebar.js"></script><script src="/js/components/modal.js"></script><script src="/js/components/table.js"></script>
+  <script>
+    let movies=[], series=[];
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (!AuthManager.checkAuth() || !AuthManager.redirectIfNotRole(['admin'])) return;
+      renderSidebar('admin');
+      [movies, series] = await Promise.all([NetPolixAPI.get('/movies'), NetPolixAPI.get('/series')]);
+      loadData();
+    });
+    async function loadData() {
+      try {
+        const data = await NetPolixAPI.get('/collections');
+        createTable('data-table', {
+          columns: [
+            { key: 'title', header: 'Título', render: v => `<span class="fw-medium">${v}</span>` },
+            { key: 'isan', header: 'ISAN', render: v => `<span class="text-muted fs-xs">${v||'-'}</span>` },
+            { key: 'volume', header: 'Vol.', render: v => v || 1 },
+            { key: 'videos', header: 'Videos', render: v => `<span class="badge badge-blue">${(v||[]).length} títulos</span>` },
+            { key: 'salePrice', header: 'Venta', type: 'currency' },
+            { key: 'rentalPrice', header: 'Alquiler', type: 'currency' }
+          ], data, emptyMessage: 'No hay colecciones',
+          actions: [
+            { name: 'edit', icon: '✏️', class: 'btn-ghost btn-sm', onClick: r => openForm(r) },
+            { name: 'del', icon: '🗑️', class: 'btn-ghost btn-sm', onClick: r => confirmModal('Eliminar', `¿Eliminar "${r.title}"?`, async () => { await NetPolixAPI.delete('/collections/'+r.id); showNotification('Eliminada','success'); loadData(); }) }
+          ]
+        });
+      } catch (e) { showNotification(e.message, 'error'); }
+    }
+    function openForm(col = null) {
+      const allVids = [...movies.map(m=>({...m,_type:'🎬'})), ...series.map(s=>({...s,_type:'📺'}))];
+      const videoCheckboxes = allVids.map(v => `<label class="form-check"><input type="checkbox" name="videos" value="${v.id}" ${col?.videos?.includes(v.id)?'checked':''}><span class="form-check-label">${v._type} ${v.title}</span></label>`).join('');
+      showModal(col ? 'Editar Colección' : 'Nueva Colección', `
+        <form id="ef">
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">ISAN *</label><input type="text" class="form-control" name="isan" value="${col?.isan||''}" required></div>
+            <div class="form-group"><label class="form-label">Título *</label><input type="text" class="form-control" name="title" value="${col?.title||''}" required></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Volumen</label><input type="number" class="form-control" name="volume" value="${col?.volume||1}" min="1"></div>
+            <div class="form-group"><label class="form-label">Precio Venta ($)</label><input type="number" class="form-control" name="salePrice" value="${col?.salePrice||''}" step="0.01"></div>
+          </div>
+          <div class="form-group"><label class="form-label">Precio Alquiler ($)</label><input type="number" class="form-control" name="rentalPrice" value="${col?.rentalPrice||''}" step="0.01"></div>
+          <div class="form-group"><label class="form-label">Videos incluidos</label><div class="form-multi-select" style="max-height:200px;overflow-y:auto;">${videoCheckboxes || '<p class="text-muted">No hay videos disponibles</p>'}</div></div>
+        </form>`,
+        `<button class="btn btn-ghost" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="save('${col?.id||''}')">Guardar</button>`,
+        { size: 'lg' });
+    }
+    async function save(id) {
+      const form = document.getElementById('ef'); const fd = new FormData(form);
+      const vids = [...form.querySelectorAll('input[name="videos"]:checked')].map(cb => cb.value);
+      const d = { isan: fd.get('isan'), title: fd.get('title'), volume: parseInt(fd.get('volume'))||1, salePrice: parseFloat(fd.get('salePrice'))||0, rentalPrice: parseFloat(fd.get('rentalPrice'))||0, videos: vids };
+      try { if (id) await NetPolixAPI.put('/collections/'+id, d); else await NetPolixAPI.post('/collections', d);
+        showNotification('Guardado', 'success'); closeModal(); loadData();
+      } catch (e) { showNotification(e.message, 'error'); }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,796 @@
+[
+  {
+    "id": "mov-001",
+    "isan": "ISAN-0001-2024",
+    "title": "Oppenheimer",
+    "year": 2023,
+    "duration": 180,
+    "classification": "R",
+    "categories": [
+      "Drama",
+      "Suspenso"
+    ],
+    "originalLanguage": "Inglés",
+    "subtitles": [
+      "Español",
+      "Francés",
+      "Portugués"
+    ],
+    "dubbing": [
+      "Español",
+      "Francés"
+    ],
+    "actors": [
+      "per-007",
+      "per-012",
+      "per-008",
+      "per-028"
+    ],
+    "directors": [
+      "per-001"
+    ],
+    "producers": [
+      "per-001"
+    ],
+    "rating": "excelente",
+    "avgRating": 4.8,
+    "totalRatings": 245,
+    "salePrice": 19.99,
+    "rentalPrice": 5.99,
+    "imageUrl": "https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg",
+    "description": "La historia del físico J. Robert Oppenheimer y su papel en el desarrollo de la bomba atómica.",
+    "createdAt": "2024-01-15T10:00:00Z",
+    "active": true
+  },
+  {
+    "id": "mov-002",
+    "isan": "ISAN-0002-2024",
+    "title": "Barbie",
+    "year": 2023,
+    "duration": 114,
+    "classification": "PG-13",
+    "categories": [
+      "Comedia",
+      "Drama"
+    ],
+    "originalLanguage": "Inglés",
+    "subtitles": [
+      "Español",
+      "Francés",
+      "Japonés"
+    ],
+    "dubbing": [
+      "Español",
+      "Portugués"
+    ],
+    "actors": [
+      "per-005",
+      "per-014"
+    ],
+    "directors": [
+      "per-011"
+    ],
+    "producers": [
+      "per-005",
+      "per-011"
+    ],
+    "rating": "buena",
+    "avgRating": 4.2,
+    "totalRatings": 312,
+    "salePrice": 17.99,
+    "rentalPrice": 4.99,
+    "imageUrl": "https://image.tmdb.org/t/p/w500/iuFNMS8U5cb6xfzi51Dbkovj7vM.jpg",
+    "description": "Barbie y Ken se embarcan en un viaje de autodescubrimiento desde Barbieland al mundo real.",
+    "createdAt": "2024-01-20T10:00:00Z",
+    "active": true
+  },
+  {
+    "id": "mov-003",
+    "isan": "ISAN-0003-2024",
+    "title": "Dune: Parte Dos",
+    "year": 2024,
+    "duration": 166,
+    "classification": "PG-13",
+    "categories": [
+      "Ciencia Ficción",
+      "Acción",
+      "Drama"
+    ],
+    "originalLanguage": "Inglés",
+    "subtitles": [
+      "Español",
+      "Francés",
+      "Alemán",
+      "Japonés"
+    ],
+    "dubbing": [
+      "Español",
+      "Francés",
+      "Alemán"
+    ],
+    "actors": [
+      "per-010",
+      "per-013",
+      "per-029",
+      "per-008"
+    ],
+    "directors": [
+      "per-009"
+    ],
+    "producers": [
+      "per-009"
+    ],
+    "rating": "excelente",
+    "avgRating": 4.9,
+    "totalRatings": 198,
+    "salePrice": 22.99,
+    "rentalPrice": 6.99,
+    "imageUrl": "https://image.tmdb.org/t/p/w500/8b8R8l88Qje9dn9OE8PY05Nez7S.jpg",
+    "description": "Paul Atreides se une a los Fremen para vengar a su familia mientras intenta evitar un terrible destino.",
+    "createdAt": "2024-03-01T10:00:00Z",
+    "active": true
+  },
+  {
+    "id": "mov-004",
+    "isan": "ISAN-0004-2024",
+    "title": "Pobres Criaturas",
+    "year": 2023,
+    "duration": 141,
+    "classification": "R",
+    "categories": [
+      "Drama",
+      "Comedia",
+      "Independiente"
+    ],
+    "originalLanguage": "Inglés",
+    "subtitles": [
+      "Español",
+      "Francés",
+      "Italiano"
+    ],
+    "dubbing": [
+      "Español"
+    ],
+    "actors": [
+      "per-016"
+    ],
+    "directors": [
+      "per-030"
+    ],
+    "producers": [
+      "per-016"
+    ],
+    "rating": "excelente",
+    "avgRating": 4.6,
+    "totalRatings": 167,
+    "salePrice": 18.99,
+    "rentalPrice": 5.49,
+    "imageUrl": "https://image.tmdb.org/t/p/w500/kCGlIMHnOm8JPXq3rXM6c5wMxcT.jpg",
+    "description": "La fantástica historia de la evolución de Bella Baxter, una mujer traída de vuelta a la vida.",
+    "createdAt": "2024-02-10T10:00:00Z",
+    "active": true
+  },
+  {
+    "id": "mov-005",
+    "isan": "ISAN-0005-2024",
+    "title": "Inception",
+    "year": 2010,
+    "duration": 148,
+    "classification": "PG-13",
+    "categories": [
+      "Ciencia Ficción",
+      "Acción",
+      "Suspenso"
+    ],
+    "originalLanguage": "Inglés",
+    "subtitles": [
+      "Español",
+      "Francés",
+      "Japonés",
+      "Chino"
+    ],
+    "dubbing": [
+      "Español",
+      "Francés",
+      "Japonés"
+    ],
+    "actors": [
+      "per-002",
+      "per-017"
+    ],
+    "directors": [
+      "per-001"
+    ],
+    "producers": [
+      "per-001"
+    ],
+    "rating": "excelente",
+    "avgRating": 4.9,
+    "totalRatings": 520,
+    "salePrice": 14.99,
+    "rentalPrice": 3.99,
+    "imageUrl": "https://image.tmdb.org/t/p/w500/ljsZTbVsrQSqZgWeep2B1QiDKuh.jpg",
+    "description": "Un ladrón que roba secretos del subconsciente durante el sueño recibe una tarea imposible.",
+    "createdAt": "2024-01-15T10:00:00Z",
+    "active": true
+  },
+  {
+    "id": "mov-006",
+    "isan": "ISAN-0006-2024",
+    "title": "Parásitos",
+    "year": 2019,
+    "duration": 132,
+    "classification": "R",
+    "categories": [
+      "Suspenso",
+      "Drama",
+      "Comedia"
+    ],
+    "originalLanguage": "Chino",
+    "subtitles": [
+      "Español",
+      "Inglés",
+      "Francés"
+    ],
+    "dubbing": [
+      "Español",
+      "Inglés"
+    ],
+    "actors": [],
+    "directors": [
+      "per-018"
+    ],
+    "producers": [
+      "per-018"
+    ],
+    "rating": "excelente",
+    "avgRating": 4.7,
+    "totalRatings": 390,
+    "salePrice": 15.99,
+    "rentalPrice": 4.99,
+    "imageUrl": "https://image.tmdb.org/t/p/w500/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg",
+    "description": "La familia Kim, desempleada, se infiltra en la vida de la rica familia Park.",
+    "createdAt": "2024-01-18T10:00:00Z",
+    "active": true
+  },
+  {
+    "id": "mov-007",
+    "isan": "ISAN-0007-2024",
+    "title": "Everything Everywhere All at Once",
+    "year": 2022,
+    "duration": 139,
+    "classification": "R",
+    "categories": [
+      "Acción",
+      "Comedia",
+      "Ciencia Ficción"
+    ],
+    "originalLanguage": "Inglés",
+    "subtitles": [
+      "Español",
+      "Francés",
+      "Chino"
+    ],
+    "dubbing": [
+      "Español"
+    ],
+    "actors": [
+      "per-026",
+      "per-025"
+    ],
+    "directors": [
+      "per-027"
+    ],
+    "producers": [
+      "per-027"
+    ],
+    "rating": "excelente",
+    "avgRating": 4.8,
+    "totalRatings": 280,
+    "salePrice": 16.99,
+    "rentalPrice": 5.49,
+    "imageUrl": "https://image.tmdb.org/t/p/w500/w3LxiVYdWWRvEVdn5RYq6jIqkb1.jpg",
+    "description": "Una inmigrante china se ve envuelta en una aventura que abarca múltiples universos.",
+    "createdAt": "2024-01-22T10:00:00Z",
+    "active": true
+  },
+  {
+    "id": "mov-008",
+    "isan": "ISAN-0008-2024",
+    "title": "The Batman",
+    "year": 2022,
+    "duration": 176,
+    "classification": "PG-13",
+    "categories": [
+      "Acción",
+      "Suspenso",
+      "Drama"
+    ],
+    "originalLanguage": "Inglés",
+    "subtitles": [
+      "Español",
+      "Francés",
+      "Portugués"
+    ],
+    "dubbing": [
+      "Español",
+      "Portugués"
+    ],
+    "actors": [
+      "per-019"
+    ],
+    "directors": [],
+    "producers": [],
+    "rating": "buena",
+    "avgRating": 4.3,
+    "totalRatings": 415,
+    "salePrice": 18.99,
+    "rentalPrice": 5.99,
+    "imageUrl": "https://image.tmdb.org/t/p/w500/74xTEgt7R36Fpooo50r9T25onhq.jpg",
+    "description": "Batman investiga la corrupción en Gotham City mientras persigue a un asesino en serie.",
+    "createdAt": "2024-02-05T10:00:00Z",
+    "active": true
+  },
+  {
+    "id": "mov-009",
+    "isan": "ISAN-0009-2024",
+    "title": "Interstellar",
+    "year": 2014,
+    "duration": 169,
+    "classification": "PG-13",
+    "categories": [
+      "Ciencia Ficción",
+      "Drama",
+      "Suspenso"
+    ],
+    "originalLanguage": "Inglés",
+    "subtitles": [
+      "Español",
+      "Francés",
+      "Japonés",
+      "Alemán"
+    ],
+    "dubbing": [
+      "Español",
+      "Francés"
+    ],
+    "actors": [
+      "per-028"
+    ],
+    "directors": [
+      "per-001"
+    ],
+    "producers": [
+      "per-001"
+    ],
+    "rating": "excelente",
+    "avgRating": 4.9,
+    "totalRatings": 610,
+    "salePrice": 14.99,
+    "rentalPrice": 3.99,
+    "imageUrl": "https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg",
+    "description": "Un grupo de exploradores viaja a través de un agujero de gusano para encontrar un nuevo hogar para la humanidad.",
+    "createdAt": "2024-01-15T10:00:00Z",
+    "active": true
+  },
+  {
+    "id": "mov-010",
+    "isan": "ISAN-0010-2024",
+    "title": "El Padrino",
+    "year": 1972,
+    "duration": 175,
+    "classification": "R",
+    "categories": [
+      "Drama",
+      "Suspenso"
+    ],
+    "originalLanguage": "Inglés",
+    "subtitles": [
+      "Español",
+      "Italiano",
+      "Francés",
+      "Portugués"
+    ],
+    "dubbing": [
+      "Español",
+      "Italiano"
+    ],
+    "actors": [],
+    "directors": [],
+    "producers": [],
+    "rating": "excelente",
+    "avgRating": 5,
+    "totalRatings": 890,
+    "salePrice": 12.99,
+    "rentalPrice": 3.49,
+    "imageUrl": "https://image.tmdb.org/t/p/w500/3bhkrj58Vtu7enYsRolD1fZdja1.jpg",
+    "description": "La historia épica de la familia Corleone y su imperio criminal en Nueva York.",
+    "createdAt": "2024-01-15T10:00:00Z",
+    "active": true
+  },
+  {
+    "id": "mov-011",
+    "isan": "ISAN-0011-2024",
+    "title": "Spider-Man: No Way Home",
+    "year": 2021,
+    "duration": 148,
+    "classification": "PG-13",
+    "categories": [
+      "Acción",
+      "Ciencia Ficción"
+    ],
+    "originalLanguage": "Inglés",
+    "subtitles": [
+      "Español",
+      "Francés",
+      "Japonés"
+    ],
+    "dubbing": [
+      "Español",
+      "Japonés"
+    ],
+    "actors": [
+      "per-017",
+      "per-013"
+    ],
+    "directors": [],
+    "producers": [],
+    "rating": "buena",
+    "avgRating": 4.5,
+    "totalRatings": 720,
+    "salePrice": 17.99,
+    "rentalPrice": 5.49,
+    "imageUrl": "https://image.tmdb.org/t/p/w500/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
+    "description": "Peter Parker pide ayuda al Doctor Strange cuando su identidad es revelada al mundo.",
+    "createdAt": "2024-02-12T10:00:00Z",
+    "active": true
+  },
+  {
+    "id": "mov-012",
+    "isan": "ISAN-0012-2024",
+    "title": "Gladiator II",
+    "year": 2024,
+    "duration": 148,
+    "classification": "R",
+    "categories": [
+      "Acción",
+      "Drama"
+    ],
+    "originalLanguage": "Inglés",
+    "subtitles": [
+      "Español",
+      "Francés",
+      "Italiano"
+    ],
+    "dubbing": [
+      "Español"
+    ],
+    "actors": [
+      "per-020"
+    ],
+    "directors": [
+      "per-022"
+    ],
+    "producers": [
+      "per-022"
+    ],
+    "rating": "buena",
+    "avgRating": 4.1,
+    "totalRatings": 145,
+    "salePrice": 21.99,
+    "rentalPrice": 6.49,
+    "imageUrl": "https://image.tmdb.org/t/p/w500/2cxhvwyEwRlysAmRH4iodkvo0z5.jpg",
+    "description": "Lucius, hijo de Lucilla, se ve forzado a entrar en el Coliseo después de que su hogar sea conquistado.",
+    "createdAt": "2024-11-15T10:00:00Z",
+    "active": true
+  },
+  {
+    "id": "mov-013",
+    "isan": "ISAN-0013-2024",
+    "title": "Killers of the Flower Moon",
+    "year": 2023,
+    "duration": 206,
+    "classification": "R",
+    "categories": [
+      "Drama",
+      "Suspenso"
+    ],
+    "originalLanguage": "Inglés",
+    "subtitles": [
+      "Español",
+      "Francés"
+    ],
+    "dubbing": [
+      "Español"
+    ],
+    "actors": [
+      "per-002",
+      "per-012"
+    ],
+    "directors": [
+      "per-015"
+    ],
+    "producers": [
+      "per-015",
+      "per-002"
+    ],
+    "rating": "excelente",
+    "avgRating": 4.6,
+    "totalRatings": 178,
+    "salePrice": 19.99,
+    "rentalPrice": 5.99,
+    "imageUrl": "https://image.tmdb.org/t/p/w500/dB6Krk806zeqd0YNp2ngQ9zXteH.jpg",
+    "description": "En los años 20, miembros de la nación Osage son asesinados tras descubrir petróleo en sus tierras.",
+    "createdAt": "2024-01-25T10:00:00Z",
+    "active": true
+  },
+  {
+    "id": "mov-014",
+    "isan": "ISAN-0014-2024",
+    "title": "Get Out",
+    "year": 2017,
+    "duration": 104,
+    "classification": "R",
+    "categories": [
+      "Terror",
+      "Suspenso"
+    ],
+    "originalLanguage": "Inglés",
+    "subtitles": [
+      "Español",
+      "Francés",
+      "Portugués"
+    ],
+    "dubbing": [
+      "Español"
+    ],
+    "actors": [],
+    "directors": [
+      "per-024"
+    ],
+    "producers": [
+      "per-024"
+    ],
+    "rating": "excelente",
+    "avgRating": 4.5,
+    "totalRatings": 340,
+    "salePrice": 13.99,
+    "rentalPrice": 3.99,
+    "imageUrl": "https://image.tmdb.org/t/p/w500/qbav3ESOV4tR6MqmOYHk1reOP8f.jpg",
+    "description": "Un joven afroamericano visita la familia de su novia blanca y descubre un inquietante secreto.",
+    "createdAt": "2024-01-30T10:00:00Z",
+    "active": true
+  },
+  {
+    "id": "mov-015",
+    "isan": "ISAN-0015-2024",
+    "title": "La La Land",
+    "year": 2016,
+    "duration": 128,
+    "classification": "PG-13",
+    "categories": [
+      "Romance",
+      "Drama",
+      "Comedia"
+    ],
+    "originalLanguage": "Inglés",
+    "subtitles": [
+      "Español",
+      "Francés",
+      "Japonés",
+      "Chino"
+    ],
+    "dubbing": [
+      "Español",
+      "Francés"
+    ],
+    "actors": [
+      "per-016",
+      "per-014"
+    ],
+    "directors": [],
+    "producers": [],
+    "rating": "excelente",
+    "avgRating": 4.7,
+    "totalRatings": 450,
+    "salePrice": 14.99,
+    "rentalPrice": 4.49,
+    "imageUrl": "https://image.tmdb.org/t/p/w500/uDO8zWDhfWwoFdKS4fzkUJt0Rf0.jpg",
+    "description": "Un músico de jazz y una aspirante a actriz se enamoran en Los Ángeles mientras persiguen sus sueños.",
+    "createdAt": "2024-02-01T10:00:00Z",
+    "active": true
+  },
+  {
+    "id": "mov-016",
+    "isan": "ISAN-0016-2024",
+    "title": "Blade Runner 2049",
+    "year": 2017,
+    "duration": 164,
+    "classification": "R",
+    "categories": [
+      "Ciencia Ficción",
+      "Drama",
+      "Suspenso"
+    ],
+    "originalLanguage": "Inglés",
+    "subtitles": [
+      "Español",
+      "Japonés",
+      "Francés"
+    ],
+    "dubbing": [
+      "Español",
+      "Japonés"
+    ],
+    "actors": [
+      "per-014",
+      "per-019"
+    ],
+    "directors": [
+      "per-009"
+    ],
+    "producers": [],
+    "rating": "excelente",
+    "avgRating": 4.6,
+    "totalRatings": 290,
+    "salePrice": 15.99,
+    "rentalPrice": 4.99,
+    "imageUrl": "https://image.tmdb.org/t/p/w500/gajva2L0rPYkEWjzgFlBXCAVBE5.jpg",
+    "description": "Un nuevo blade runner descubre un secreto que podría sumir a la sociedad en el caos.",
+    "createdAt": "2024-02-08T10:00:00Z",
+    "active": true
+  },
+  {
+    "id": "mov-017",
+    "isan": "ISAN-0017-2024",
+    "title": "Pulp Fiction",
+    "year": 1994,
+    "duration": 154,
+    "classification": "R",
+    "categories": [
+      "Drama",
+      "Comedia",
+      "Suspenso"
+    ],
+    "originalLanguage": "Inglés",
+    "subtitles": [
+      "Español",
+      "Francés",
+      "Portugués",
+      "Italiano"
+    ],
+    "dubbing": [
+      "Español"
+    ],
+    "actors": [],
+    "directors": [
+      "per-006"
+    ],
+    "producers": [
+      "per-006"
+    ],
+    "rating": "excelente",
+    "avgRating": 4.8,
+    "totalRatings": 680,
+    "salePrice": 12.99,
+    "rentalPrice": 3.49,
+    "imageUrl": "https://image.tmdb.org/t/p/w500/d5iIlFn5s0ImszYzBPb8JPIfbXD.jpg",
+    "description": "Múltiples historias entrelazadas de crimen y redención en Los Ángeles.",
+    "createdAt": "2024-01-15T10:00:00Z",
+    "active": true
+  },
+  {
+    "id": "mov-018",
+    "isan": "ISAN-0018-2024",
+    "title": "The Menu",
+    "year": 2022,
+    "duration": 107,
+    "classification": "R",
+    "categories": [
+      "Suspenso",
+      "Terror",
+      "Comedia"
+    ],
+    "originalLanguage": "Inglés",
+    "subtitles": [
+      "Español",
+      "Francés"
+    ],
+    "dubbing": [
+      "Español"
+    ],
+    "actors": [
+      "per-021",
+      "per-019"
+    ],
+    "directors": [],
+    "producers": [],
+    "rating": "buena",
+    "avgRating": 4.2,
+    "totalRatings": 210,
+    "salePrice": 15.99,
+    "rentalPrice": 4.49,
+    "imageUrl": "https://image.tmdb.org/t/p/w500/v31MsWhF9WFh7Qooqbnj6yDm73j.jpg",
+    "description": "Una joven pareja viaja a una isla exclusiva para cenar en un restaurante del famoso chef Slowik.",
+    "createdAt": "2024-02-15T10:00:00Z",
+    "active": true
+  },
+  {
+    "id": "mov-019",
+    "isan": "ISAN-0019-2024",
+    "title": "Little Women",
+    "year": 2019,
+    "duration": 135,
+    "classification": "PG",
+    "categories": [
+      "Drama",
+      "Romance"
+    ],
+    "originalLanguage": "Inglés",
+    "subtitles": [
+      "Español",
+      "Francés",
+      "Portugués"
+    ],
+    "dubbing": [
+      "Español",
+      "Francés"
+    ],
+    "actors": [
+      "per-023",
+      "per-008",
+      "per-010"
+    ],
+    "directors": [
+      "per-011"
+    ],
+    "producers": [],
+    "rating": "buena",
+    "avgRating": 4.4,
+    "totalRatings": 320,
+    "salePrice": 13.99,
+    "rentalPrice": 3.99,
+    "imageUrl": "https://image.tmdb.org/t/p/w500/yn5ihODtZ7ofn8pDYfxCmxh8AXI.jpg",
+    "description": "Las cuatro hermanas March luchan por vivir con independencia en la América de la Guerra Civil.",
+    "createdAt": "2024-02-20T10:00:00Z",
+    "active": true
+  },
+  {
+    "id": "mov-020",
+    "isan": "ISAN-0020-2024",
+    "title": "Mandalorian: La Película",
+    "year": 2025,
+    "duration": 142,
+    "classification": "PG-13",
+    "categories": [
+      "Acción",
+      "Ciencia Ficción"
+    ],
+    "originalLanguage": "Inglés",
+    "subtitles": [
+      "Español",
+      "Francés",
+      "Japonés",
+      "Alemán"
+    ],
+    "dubbing": [
+      "Español",
+      "Francés",
+      "Japonés"
+    ],
+    "actors": [
+      "per-020"
+    ],
+    "directors": [],
+    "producers": [],
+    "rating": "buena",
+    "avgRating": 4.3,
+    "totalRatings": 95,
+    "salePrice": 24.5,
+    "rentalPrice": 20.3,
+    "imageUrl": "https://image.tmdb.org/t/p/w500/sKCr78MXSLixwmZ8DyJLrpMsd15.jpg",
+    "description": "Din Djarin y Grogu enfrentan una nueva amenaza que pone en peligro a toda la galaxia.",
+    "createdAt": "2025-01-10T10:00:00Z",
+    "active": true
+  }
+]

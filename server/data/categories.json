@@ -1,0 +1,52 @@
+[
+  {
+    "id": "cat-001",
+    "name": "Comedia",
+    "description": "Películas diseñadas para hacer reír al espectador"
+  },
+  {
+    "id": "cat-002",
+    "name": "Terror",
+    "description": "Películas que buscan provocar miedo y suspense"
+  },
+  {
+    "id": "cat-003",
+    "name": "Acción",
+    "description": "Películas con escenas de alto impacto y adrenalina"
+  },
+  {
+    "id": "cat-004",
+    "name": "Suspenso",
+    "description": "Películas que mantienen la tensión y el misterio"
+  },
+  {
+    "id": "cat-005",
+    "name": "Drama",
+    "description": "Películas enfocadas en conflictos emocionales profundos"
+  },
+  {
+    "id": "cat-006",
+    "name": "Independiente",
+    "description": "Producciones fuera del sistema de grandes estudios"
+  },
+  {
+    "id": "cat-007",
+    "name": "Ciencia Ficción",
+    "description": "Películas ambientadas en futuros o realidades alternativas"
+  },
+  {
+    "id": "cat-008",
+    "name": "Romance",
+    "description": "Películas centradas en relaciones amorosas"
+  },
+  {
+    "id": "cat-009",
+    "name": "Animación",
+    "description": "Películas realizadas con técnicas de animación"
+  },
+  {
+    "id": "cat-010",
+    "name": "Documental",
+    "description": "Películas basadas en hechos reales documentados"
+  }
+]

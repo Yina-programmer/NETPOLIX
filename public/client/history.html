@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Historial - NetPolix</title>
+  <link rel="icon" href="/assets/logo-netpolix.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/variables.css">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/animations.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+  <div class="app-layout">
+    <div class="sidebar" id="sidebar"></div>
+    <div class="main-content">
+      <header class="top-bar">
+        <button class="mobile-menu-btn" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+        <h2 class="top-bar-title">Historial de Operaciones</h2>
+      </header>
+      <div class="page-content">
+        <div class="page-header"><h1>📋 Mi Historial</h1><p>Registro de todas tus compras y alquileres</p></div>
+
+        <!-- Summary stats -->
+        <div class="stats-grid mb-6" style="grid-template-columns:repeat(3,1fr);">
+          <div class="stat-card"><div class="stat-icon green">💰</div><div class="stat-value" id="total-spent">$0</div><div class="stat-label">Total Gastado</div></div>
+          <div class="stat-card"><div class="stat-icon blue">📦</div><div class="stat-value" id="total-ops">0</div><div class="stat-label">Operaciones</div></div>
+          <div class="stat-card"><div class="stat-icon yellow">⭐</div><div class="stat-value" id="total-pts">0</div><div class="stat-label">Puntos Ganados</div></div>
+        </div>
+
+        <!-- Filters -->
+        <div class="toolbar mb-4">
+          <div class="toolbar-left">
+            <select class="form-select" id="filter-type" onchange="filterHistory()" style="width:160px;">
+              <option value="">Todas las ops.</option>
+              <option value="compra">Solo Compras</option>
+              <option value="alquiler">Solo Alquileres</option>
+            </select>
+            <select class="form-select" id="filter-item" onchange="filterHistory()" style="width:160px;">
+              <option value="">Todo el contenido</option>
+              <option value="movie">Películas</option>
+              <option value="series">Series</option>
+              <option value="collection">Colecciones</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="history-table" class="fade-in-up"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/components/notifications.js"></script>
+  <script src="/js/components/sidebar.js"></script>
+  <script src="/js/components/table.js"></script>
+  <script>
+    let allOrders = [];
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (!AuthManager.checkAuth()) return;
+      if (!AuthManager.redirectIfNotRole(['cliente'])) return;
+      renderSidebar('cliente');
+
+      try {
+        allOrders = await NetPolixAPI.get('/orders/my');
+        const totalSpent = allOrders.reduce((s, o) => s + o.price, 0);
+        const totalPts = allOrders.reduce((s, o) => s + (o.pointsEarned || 0), 0);
+        document.getElementById('total-spent').textContent = '$' + totalSpent.toFixed(2);
+        document.getElementById('total-ops').textContent = allOrders.length;
+        document.getElementById('total-pts').textContent = totalPts;
+        filterHistory();
+      } catch (err) {
+        showNotification('Error cargando historial: ' + err.message, 'error');
+      }
+    });
+
+    function filterHistory() {
+      const type = document.getElementById('filter-type').value;
+      const item = document.getElementById('filter-item').value;
+      let filtered = allOrders;
+      if (type) filtered = filtered.filter(o => o.type === type);
+      if (item) filtered = filtered.filter(o => o.itemType === item);
+
+      createTable('history-table', {
+        columns: [
+          { key: 'itemTitle', header: 'Título' },
+          { key: 'type', header: 'Operación', type: 'badge', badgeMap: { 'compra': 'badge-green', 'alquiler': 'badge-blue' } },
+          { key: 'itemType', header: 'Tipo', render: v => ({ movie: '🎬 Película', series: '📺 Serie', collection: '📦 Colección' }[v] || v) },
+          { key: 'price', header: 'Precio', type: 'currency' },
+          { key: 'pointsEarned', header: 'Puntos ganados', render: v => `<span class="neon-text-blue fw-medium">+${v || 0} ⭐</span>` },
+          { key: 'pointsRedeemed', header: 'Pts canjeados', render: v => v > 0 ? `<span class="text-warning">-${v} ⭐</span>` : '<span class="text-muted">-</span>' },
+          { key: 'date', header: 'Fecha', type: 'date' }
+        ],
+        data: filtered,
+        emptyMessage: 'No hay operaciones en el historial'
+      });
+    }
+  </script>
+</body>
+</html>

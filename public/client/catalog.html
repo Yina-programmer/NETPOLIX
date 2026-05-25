@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catálogo Premium - NetPolix</title>
+  <meta name="description" content="Explora el catálogo premium de NetPolix. Compra y alquila películas y series con beneficios exclusivos para miembros.">
+  <link rel="icon" href="/assets/logo-netpolix.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/variables.css">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/animations.css">
+  <link rel="stylesheet" href="/css/forms.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/client-catalog.css">
+</head>
+<body>
+  <div class="app-layout">
+    <div class="sidebar" id="sidebar"></div>
+    <div class="main-content">
+      <header class="top-bar">
+        <button class="mobile-menu-btn" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+        <h2 class="top-bar-title">Catálogo</h2>
+        <div class="top-bar-actions">
+          <a href="/client/cart.html" class="btn btn-outline btn-sm" id="top-cart-btn">🛒 Carrito <span id="cart-count-top" class="badge badge-red" style="margin-left:4px;">0</span></a>
+        </div>
+      </header>
+      <div class="page-content">
+
+        <!-- ═══ HERO CAROUSEL ═══ -->
+        <div class="catalog-hero" id="hero-carousel">
+          <div class="hero-loading" style="display:flex;align-items:center;justify-content:center;height:100%;background:var(--bg-surface);border-radius:var(--radius-xl);">
+            <div class="spinner"></div>
+          </div>
+        </div>
+
+        <!-- ═══ VIP POINTS BANNER ═══ -->
+        <div class="vip-banner">
+          <div class="vip-banner-content">
+            <div class="vip-banner-left">
+              <div class="vip-icon">👑</div>
+              <div class="vip-text">
+                <h3>Tus Puntos: <span class="points-value" id="user-points">0</span></h3>
+                <p>Acumula puntos y canjéalos por descuentos exclusivos</p>
+              </div>
+            </div>
+            <div class="vip-banner-right">
+              <div class="vip-stat">
+                <span class="stat-num" id="stat-movies">0</span>
+                <span class="stat-lbl">Películas</span>
+              </div>
+              <div class="vip-stat">
+                <span class="stat-num" id="stat-series">0</span>
+                <span class="stat-lbl">Series</span>
+              </div>
+              <div class="vip-stat">
+                <span class="stat-num" id="stat-collections">0</span>
+                <span class="stat-lbl">Colecciones</span>
+              </div>
+              <a href="/client/profile.html" class="btn btn-outline btn-sm" style="align-self:center;">Ver Perfil</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══ FILTERS ═══ -->
+        <div class="premium-filters">
+          <div class="search-wrapper">
+            <span class="search-icon-premium">🔍</span>
+            <input type="text" id="search-input" placeholder="Buscar películas, series, colecciones..." oninput="applyFilters()">
+          </div>
+          <select class="filter-select" id="filter-category" onchange="applyFilters()">
+            <option value="">Todas las categorías</option>
+          </select>
+          <select class="filter-select" id="filter-sort" onchange="applyFilters()">
+            <option value="">Ordenar por</option>
+            <option value="rating">⭐ Mejor calificados</option>
+            <option value="price_asc">💰 Precio menor</option>
+            <option value="price_desc">💎 Precio mayor</option>
+            <option value="year_desc">🆕 Más recientes</option>
+          </select>
+        </div>
+
+        <!-- ═══ TABS ═══ -->
+        <div class="premium-tabs" id="content-tabs">
+          <button class="premium-tab active" onclick="switchTab('movies',this)">
+            🎬 Películas <span class="tab-count" id="tab-count-movies">0</span>
+          </button>
+          <button class="premium-tab" onclick="switchTab('series',this)">
+            📺 Series <span class="tab-count" id="tab-count-series">0</span>
+          </button>
+          <button class="premium-tab" onclick="switchTab('collections',this)">
+            📦 Colecciones <span class="tab-count" id="tab-count-collections">0</span>
+          </button>
+        </div>
+
+        <!-- ═══ SECTION TITLE + RESULTS ═══ -->
+        <div class="catalog-section-title">
+          <h2 id="section-title">🎬 <span class="section-accent">Películas</span></h2>
+          <span class="results-count" id="results-count"></span>
+        </div>
+
+        <!-- ═══ CONTENT GRID ═══ -->
+        <div id="content-grid" class="premium-grid">
+          <div class="skeleton skeleton-card" style="aspect-ratio:2/3;border-radius:var(--radius-xl);"></div>
+          <div class="skeleton skeleton-card" style="aspect-ratio:2/3;border-radius:var(--radius-xl);"></div>
+          <div class="skeleton skeleton-card" style="aspect-ratio:2/3;border-radius:var(--radius-xl);"></div>
+          <div class="skeleton skeleton-card" style="aspect-ratio:2/3;border-radius:var(--radius-xl);"></div>
+          <div class="skeleton skeleton-card" style="aspect-ratio:2/3;border-radius:var(--radius-xl);"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ FLOATING CART ═══ -->
+  <a href="/client/cart.html" class="floating-cart" id="floating-cart" style="display:none;">
+    🛒 Carrito
+    <span class="cart-badge" id="cart-count-float">0</span>
+  </a>
+
+  <!-- ═══ MODAL ═══ -->
+  <div id="modal-overlay" class="modal-overlay">
+    <div class="modal" id="modal-container"></div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/components/notifications.js"></script>
+  <script src="/js/components/sidebar.js"></script>
+  <script>
+    let allMovies = [], allSeries = [], allCollections = [];
+    let currentTab = 'movies';
+    let cart = JSON.parse(localStorage.getItem('netpolix_cart') || '[]');
+    let heroInterval = null;
+    let currentSlide = 0;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (!AuthManager.checkAuth()) return;
+      if (!AuthManager.redirectIfNotRole(['cliente'])) return;
+      renderSidebar('cliente');
+      updateCartCount();
+
+      // Load user points
+      try {
+        const profile = await NetPolixAPI.get('/auth/profile');
+        document.getElementById('user-points').textContent = profile.points || 0;
+      } catch (e) {}
+
+      // Load categories for filter
+      try {
+        const cats = await NetPolixAPI.get('/categories');
+        const sel = document.getElementById('filter-category');
+        cats.forEach(c => {
+          const o = document.createElement('option');
+          o.value = c.name;
+          o.textContent = c.name;
+          sel.appendChild(o);
+        });
+      } catch (e) {}
+
+      loadContent();
+    });
+
+    async function loadContent() {
+      try {
+        [allMovies, allSeries, allCollections] = await Promise.all([
+          NetPolixAPI.get('/movies'),
+          NetPolixAPI.get('/series'),
+          NetPolixAPI.get('/collections')
+        ]);
+
+        // Update stats
+        document.getElementById('stat-movies').textContent = allMovies.length;
+        document.getElementById('stat-series').textContent = allSeries.length;
+        document.getElementById('stat-collections').textContent = allCollections.length;
+
+        // Update tab counts
+        document.getElementById('tab-count-movies').textContent = allMovies.length;
+        document.getElementById('tab-count-series').textContent = allSeries.length;
+        document.getElementById('tab-count-collections').textContent = allCollections.length;
+
+        // Build hero carousel with top rated movies
+        buildHeroCarousel();
+
+        // Render grid
+        renderGrid();
+      } catch (err) {
+        showNotification('Error cargando catálogo', 'error');
+      }
+    }
+
+    // ═══ HERO CAROUSEL ═══
+    function buildHeroCarousel() {
+      const featured = [...allMovies]
+        .filter(m => m.imageUrl && m.description)
+        .sort((a, b) => (b.avgRating || 0) - (a.avgRating || 0))
+        .slice(0, 5);
+
+      if (!featured.length) {
+        document.getElementById('hero-carousel').style.display = 'none';
+        return;
+      }
+
+      const carousel = document.getElementById('hero-carousel');
+      carousel.innerHTML = featured.map((m, i) => `
+        <div class="hero-slide ${i === 0 ? 'active' : ''}" data-index="${i}">
+          <img src="${m.imageUrl}" alt="${m.title}" onerror="this.src='/assets/logo-netpolix.png'">
+          <div class="hero-gradient"></div>
+          <div class="hero-info">
+            <div class="hero-badge">⭐ Top ${i + 1} · ${m.classification || 'NR'}</div>
+            <h2>${m.title}</h2>
+            <div class="hero-meta">
+              <span>${m.year || '?'}</span>
+              <span>·</span>
+              <span>${m.duration ? m.duration + ' min' : ''}</span>
+              <span>·</span>
+              <span class="hero-rating">★ ${m.avgRating?.toFixed(1) || 'N/A'}</span>
+              <span>·</span>
+              <span>${(m.categories || []).slice(0, 3).join(', ')}</span>
+            </div>
+            <p class="hero-desc">${m.description || ''}</p>
+            <div class="hero-actions">
+              <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); addToCart(${JSON.stringify({ id: m.id, title: m.title, type: 'movie', salePrice: m.salePrice, rentalPrice: m.rentalPrice }).replace(/"/g, '&quot;')}, 'compra')">
+                💳 Comprar · $${m.salePrice?.toFixed(2) || '0.00'}
+              </button>
+              <button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); addToCart(${JSON.stringify({ id: m.id, title: m.title, type: 'movie', salePrice: m.salePrice, rentalPrice: m.rentalPrice }).replace(/"/g, '&quot;')}, 'alquiler')">
+                🎬 Alquilar · $${m.rentalPrice?.toFixed(2) || '0.00'}
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('') + `
+        <div class="hero-dots">
+          ${featured.map((_, i) => `<button class="dot ${i === 0 ? 'active' : ''}" onclick="goToSlide(${i})"></button>`).join('')}
+        </div>
+      `;
+
+      // Auto-rotate
+      if (featured.length > 1) {
+        heroInterval = setInterval(() => {
+          currentSlide = (currentSlide + 1) % featured.length;
+          goToSlide(currentSlide);
+        }, 6000);
+      }
+    }
+
+    function goToSlide(index) {
+      currentSlide = index;
+      document.querySelectorAll('.hero-slide').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.hero-dots .dot').forEach(d => d.classList.remove('active'));
+      const slides = document.querySelectorAll('.hero-slide');
+      const dots = document.querySelectorAll('.hero-dots .dot');
+      if (slides[index]) slides[index].classList.add('active');
+      if (dots[index]) dots[index].classList.add('active');
+    }
+
+    // ═══ TAB SWITCHING ═══
+    function switchTab(tab, el) {
+      currentTab = tab;
+      document.querySelectorAll('.premium-tab').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+
+      const titleEl = document.getElementById('section-title');
+      if (tab === 'movies') titleEl.innerHTML = '🎬 <span class="section-accent">Películas</span>';
+      else if (tab === 'series') titleEl.innerHTML = '📺 <span class="section-accent">Series</span>';
+      else titleEl.innerHTML = '📦 <span class="section-accent">Colecciones</span>';
+
+      renderGrid();
+    }
+
+    function applyFilters() { renderGrid(); }
+
+    // ═══ RENDER GRID ═══
+    function renderGrid() {
+      const search = document.getElementById('search-input').value.toLowerCase();
+      const cat = document.getElementById('filter-category').value;
+      const sort = document.getElementById('filter-sort').value;
+      const grid = document.getElementById('content-grid');
+      let items = [];
+
+      if (currentTab === 'movies') {
+        items = allMovies.filter(m => {
+          if (search && !m.title.toLowerCase().includes(search)) return false;
+          if (cat && !m.categories?.includes(cat)) return false;
+          return true;
+        });
+        applySorting(items, sort);
+        document.getElementById('results-count').textContent = `${items.length} resultado${items.length !== 1 ? 's' : ''}`;
+        grid.innerHTML = items.length
+          ? items.map((m, i) => premiumMovieCard(m, 'movie', i)).join('')
+          : emptyState('películas');
+      } else if (currentTab === 'series') {
+        items = allSeries.filter(s => {
+          if (search && !s.title.toLowerCase().includes(search)) return false;
+          if (cat && !s.categories?.includes(cat)) return false;
+          return true;
+        });
+        applySorting(items, sort);
+        document.getElementById('results-count').textContent = `${items.length} resultado${items.length !== 1 ? 's' : ''}`;
+        grid.innerHTML = items.length
+          ? items.map((s, i) => premiumMovieCard(s, 'series', i)).join('')
+          : emptyState('series');
+      } else {
+        items = allCollections.filter(c => !search || c.title.toLowerCase().includes(search));
+        document.getElementById('results-count').textContent = `${items.length} resultado${items.length !== 1 ? 's' : ''}`;
+        grid.innerHTML = items.length
+          ? items.map((c, i) => premiumCollectionCard(c, i)).join('')
+          : emptyState('colecciones');
+      }
+    }
+
+    function applySorting(items, sort) {
+      if (sort === 'rating') items.sort((a, b) => (b.avgRating || 0) - (a.avgRating || 0));
+      else if (sort === 'price_asc') items.sort((a, b) => (a.salePrice || 0) - (b.salePrice || 0));
+      else if (sort === 'price_desc') items.sort((a, b) => (b.salePrice || 0) - (a.salePrice || 0));
+      else if (sort === 'year_desc') items.sort((a, b) => (b.year || 0) - (a.year || 0));
+    }
+
+    // ═══ PREMIUM MOVIE CARD ═══
+    function premiumMovieCard(item, type, i) {
+      const inCart = cart.some(c => c.itemId === item.id);
+      const itemData = JSON.stringify({
+        id: item.id, title: item.title, type,
+        salePrice: item.salePrice, rentalPrice: item.rentalPrice
+      }).replace(/"/g, '&quot;');
+
+      return `
+        <div class="premium-card fade-in-up" style="animation-delay:${i * 0.04}s">
+          <div class="card-poster">
+            <img src="${item.imageUrl || '/assets/logo-netpolix.png'}" alt="${item.title}" loading="lazy" onerror="this.src='/assets/logo-netpolix.png'">
+            <div class="card-badges">
+              ${item.classification ? `<span class="card-classification">${item.classification}</span>` : '<span></span>'}
+              ${item.avgRating ? `<span class="card-rating-badge">★ ${item.avgRating.toFixed(1)}</span>` : ''}
+            </div>
+            ${inCart ? '<div class="in-cart-badge">✓ En carrito</div>' : ''}
+            <div class="card-overlay">
+              <div class="overlay-categories">${(item.categories || []).join(' · ')}</div>
+              ${item.description ? `<div class="overlay-desc">${item.description}</div>` : ''}
+              <div class="overlay-actions">
+                <button class="btn-buy" onclick="event.stopPropagation(); addToCart(${itemData}, 'compra')">
+                  💳 Comprar
+                  <span class="btn-label">$${item.salePrice?.toFixed(2) || '0.00'}</span>
+                </button>
+                <button class="btn-rent" onclick="event.stopPropagation(); addToCart(${itemData}, 'alquiler')">
+                  🎬 Alquilar
+                  <span class="btn-label">$${item.rentalPrice?.toFixed(2) || '0.00'}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="card-info">
+            <div class="card-title">${item.title}</div>
+            <div class="card-detail-row">
+              <span class="detail-chip">${item.year || '?'}</span>
+              ${item.duration ? `<span class="detail-divider"></span><span class="detail-chip">${item.duration} min</span>` : ''}
+              ${item.originalLanguage ? `<span class="detail-divider"></span><span class="detail-chip">${item.originalLanguage}</span>` : ''}
+            </div>
+            <div class="card-pricing">
+              <span class="card-sale-price">$${item.salePrice?.toFixed(2) || '0.00'}</span>
+              <span class="card-rent-price">Alquiler: <span>$${item.rentalPrice?.toFixed(2) || '0.00'}</span></span>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    // ═══ PREMIUM COLLECTION CARD ═══
+    function premiumCollectionCard(col, i) {
+      const itemData = JSON.stringify({
+        id: col.id, title: col.title, type: 'collection',
+        salePrice: col.salePrice, rentalPrice: col.rentalPrice
+      }).replace(/"/g, '&quot;');
+
+      return `
+        <div class="premium-collection-card fade-in-up" style="animation-delay:${i * 0.04}s">
+          <div class="collection-visual">
+            <div class="collection-stack">
+              <div class="stack-icon">🎬</div>
+              <span class="stack-count">${col.videos?.length || 0}</span>
+              <span class="stack-label">Títulos</span>
+            </div>
+            <div class="card-overlay">
+              <div class="overlay-actions">
+                <button class="btn-buy" onclick="event.stopPropagation(); addToCart(${itemData}, 'compra')">
+                  💳 Comprar
+                  <span class="btn-label">$${col.salePrice?.toFixed(2) || '0.00'}</span>
+                </button>
+                <button class="btn-rent" onclick="event.stopPropagation(); addToCart(${itemData}, 'alquiler')">
+                  🎬 Alquilar
+                  <span class="btn-label">$${col.rentalPrice?.toFixed(2) || '0.00'}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="card-info">
+            <div class="card-title">${col.title}</div>
+            <div class="card-detail-row">
+              <span class="detail-chip">Vol. ${col.volume || 1}</span>
+              <span class="detail-divider"></span>
+              <span class="detail-chip">${col.videos?.length || 0} videos</span>
+            </div>
+            <div class="card-pricing">
+              <span class="card-sale-price">$${col.salePrice?.toFixed(2) || '0.00'}</span>
+              <span class="card-rent-price">Alquiler: <span>$${col.rentalPrice?.toFixed(2) || '0.00'}</span></span>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    // ═══ EMPTY STATE ═══
+    function emptyState(type) {
+      return `
+        <div class="premium-empty">
+          <div class="empty-visual">🎬</div>
+          <h3>No hay ${type} disponibles</h3>
+          <p>Intenta cambiar los filtros o vuelve más tarde</p>
+        </div>`;
+    }
+
+    // ═══ CART FUNCTIONS ═══
+    function addToCart(item, opType) {
+      const existing = cart.findIndex(c => c.itemId === item.id && c.opType === opType);
+      if (existing >= 0) {
+        showNotification('Este item ya está en tu carrito', 'info');
+        return;
+      }
+      cart.push({
+        itemId: item.id,
+        itemTitle: item.title,
+        itemType: item.type,
+        opType,
+        price: opType === 'compra' ? item.salePrice : item.rentalPrice
+      });
+      localStorage.setItem('netpolix_cart', JSON.stringify(cart));
+      updateCartCount();
+      showNotification(`"${item.title}" agregado al carrito`, 'success');
+
+      // Re-render to show "in cart" badge
+      renderGrid();
+    }
+
+    function updateCartCount() {
+      const count = cart.length;
+      document.getElementById('cart-count-top').textContent = count;
+      document.getElementById('cart-count-float').textContent = count;
+
+      const floatingCart = document.getElementById('floating-cart');
+      if (count > 0) {
+        floatingCart.style.display = 'flex';
+      } else {
+        floatingCart.style.display = 'none';
+      }
+    }
+  </script>
+</body>
+</html>
