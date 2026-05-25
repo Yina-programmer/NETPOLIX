@@ -55,6 +55,8 @@ netpolix/
 │   ├── schema.prisma            ← Modelo de datos (10 tablas)
 │   └── seed.js                  ← Carga inicial desde server/data/*.json
 ├── .env.example                 ← Plantilla de variables de entorno
+├── docs/
+│   └── diagrama-er-netpolix.png ← Diagrama entidad-relación
 │
 ├── server/                      ← 🔵 BACKEND
 │   ├── config/
@@ -148,12 +150,22 @@ copy .env.example .env
 
 > Si no tienes otro PostgreSQL en el puerto 5432, puedes usar el puerto por defecto `5432` y cambiar `DB_PORT` y `DATABASE_URL` en `.env`.
 
-3. Crea tablas y carga datos desde `server/data/*.json`:
+3. Crea el usuario y la base de datos en PostgreSQL (SQL Shell o pgAdmin):
+
+```sql
+CREATE USER netpolix WITH PASSWORD 'netpolix2024' LOGIN CREATEDB;
+CREATE DATABASE netpolix OWNER netpolix;
+GRANT ALL PRIVILEGES ON DATABASE netpolix TO netpolix;
+```
+
+4. Crea tablas y carga datos desde `server/data/*.json`:
 
 ```bash
 npm install
 npm run db:setup
 ```
+
+**Ver datos:** usa **pgAdmin 4** (programa de escritorio) o `npm run db:studio` → http://localhost:5555. El puerto **5433** es solo para PostgreSQL, no se abre en el navegador como una web.
 
 Comandos útiles:
 
@@ -357,13 +369,55 @@ Los puntos se configuran dinámicamente desde el panel de administración.
 
 ## 🗄️ Modelo de datos (PostgreSQL)
 
-NetPolix usa **10 tablas** en PostgreSQL. La única relación con **clave foránea (FK)** en la base de datos es **User → Order**. El resto se conecta por **referencias lógicas** (IDs o textos en arrays), como en el diseño del catálogo.
+NetPolix persiste la información en **PostgreSQL** con **Prisma ORM**. El diseño tiene **10 tablas** y una relación formal con clave foránea: **un usuario tiene muchos pedidos** (`User` → `Order`).
 
-### Diagrama relacional
+<p align="center">
+  <img src="docs/diagrama-er-netpolix.png" alt="Diagrama entidad-relación NetPolix" width="900">
+  <br>
+  <em>Diagrama entidad-relación — diseño conceptual del catálogo y las ventas</em>
+</p>
+
+### Relación principal (FK en base de datos)
+
+| Relación | Cardinalidad | Descripción |
+|----------|--------------|-------------|
+| **User** → **Order** | 1 : N | Un usuario realiza cero o muchos pedidos. `Order.userId` referencia `User.id`. |
+
+### Tablas y campos principales
+
+| Tabla | Campos clave | Descripción |
+|-------|--------------|-------------|
+| **User** | `id`, `documentId` (UK), `email` (UK), `password`, `role`, `points`, `referralCode`, `penalized`, `active` | Admin, gerente y clientes |
+| **Order** | `id`, `userId` (FK), `type`, `itemType`, `itemId`, `price`, `pointsEarned` | Compras y alquileres |
+| **Movie** | `id`, `isan` (UK), `title`, `year`, `duration`, `classification`, `categories[]`, `salePrice`, `rentalPrice`, `avgRating`, `active` | Películas del catálogo |
+| **Series** | `id`, `title`, `season`, `categories[]`, `salePrice`, `rentalPrice`, `active` | Series por temporadas |
+| **Collection** | `id`, `title`, `videos[]`, `salePrice` | Paquetes de películas/series |
+| **Person** | `id`, `name`, `birthDate`, `roles[]` | Actores, directores, productores |
+| **Category** | `id`, `name` (UK), `description` | Géneros (Drama, Acción, etc.) |
+| **Classification** | `id`, `type` (UK), `description` | Clasificación por edad (G, PG, R…) |
+| **Language** | `id`, `name` (UK), `code` (UK) | Idiomas de audio y subtítulos |
+| **Config** | `id` (= 1), `movieRentalPrice`, `movieSalePrice`, `pointsPerRental`, `pointsPerSale` | Precios y reglas de puntos |
+
+> **UK** = único · **FK** = clave foránea · Los campos `categories[]`, `videos[]`, `roles[]` son arreglos en PostgreSQL.
+
+### Relaciones lógicas (sin FK en PostgreSQL)
+
+Estas conexiones se resuelven en la aplicación (IDs o textos guardados en campos y arrays):
+
+| Desde | Hacia | Cómo se enlaza |
+|-------|-------|----------------|
+| **Order** | Movie / Series / Collection | `itemId` + `itemType` (`movie`, `series`, `collection`) |
+| **Movie** | Classification | `Movie.classification` = `Classification.type` |
+| **Movie / Series** | Category | Array `categories[]` |
+| **Movie / Series** | Person | Arrays `actors[]`, `directors[]`, `producers[]` |
+| **Collection** | Movie / Series | Array `videos[]` con IDs de contenido |
+| **Config** | Pedidos / catálogo | Precios por defecto y puntos por compra o alquiler |
+
+### Diagrama interactivo (Mermaid)
 
 ```mermaid
 erDiagram
-    User ||--o{ Order : "realiza (FK)"
+    User ||--o{ Order : "tiene"
 
     User {
         string id PK
@@ -371,6 +425,7 @@ erDiagram
         string email UK
         string role
         int points
+        boolean penalized
         boolean active
     }
 
@@ -388,17 +443,20 @@ erDiagram
         string id PK
         string isan UK
         string title
+        int year
         string classification
-        string categories
         float salePrice
+        float rentalPrice
+        float avgRating
         boolean active
     }
 
     Series {
         string id PK
         string title
-        string categories
+        int season
         float salePrice
+        float rentalPrice
         boolean active
     }
 
@@ -412,12 +470,14 @@ erDiagram
     Person {
         string id PK
         string name
+        string birthDate
         string roles
     }
 
     Category {
         string id PK
         string name UK
+        string description
     }
 
     Classification {
@@ -434,33 +494,23 @@ erDiagram
     Config {
         int id PK
         float movieRentalPrice
+        float movieSalePrice
         int pointsPerRental
+        int pointsPerSale
     }
 
-    Order }o..o| Movie : "itemId si itemType=movie"
-    Order }o..o| Series : "itemId si itemType=series"
-    Order }o..o| Collection : "itemId si itemType=collection"
-    Movie }o..o| Classification : "classification = type"
+    Order }o..o| Movie : "itemType movie"
+    Order }o..o| Series : "itemType series"
+    Order }o..o| Collection : "itemType collection"
+    Movie }o..o| Classification : "classification"
     Movie }o..o{ Category : "categories"
     Series }o..o{ Category : "categories"
-    Movie }o..o{ Person : "actors directors"
+    Movie }o..o{ Person : "cast crew"
     Collection }o..o{ Movie : "videos"
     Collection }o..o{ Series : "videos"
 ```
 
-> Líneas punteadas: relación **lógica** en la app (sin FK en PostgreSQL).
-
-### Cómo se relacionan las entidades
-
-| Desde | Hacia | Tipo | Conexión |
-|-------|-------|------|----------|
-| **User** | **Order** | 1 → N (FK) | `Order.userId` → `User.id` |
-| **Order** | **Movie / Series / Collection** | N → 1 (lógica) | `itemId` + `itemType` |
-| **Movie** | **Classification** | N → 1 (lógica) | `Movie.classification` = `Classification.type` |
-| **Movie / Series** | **Category** | N → N (lógica) | Array `categories[]` |
-| **Movie / Series** | **Person** | N → N (lógica) | Arrays `actors[]`, `directors[]` |
-| **Collection** | **Movie / Series** | N → N (lógica) | Array `videos[]` |
-| **Config** | Sistema | 1 fila global | `id = 1`: precios y puntos |
+> En el diagrama de la imagen, la línea sólida **User — Order** es la única FK. Las demás son referencias lógicas del dominio.
 
 ### Vista por módulos
 
@@ -542,7 +592,7 @@ Este proyecto está bajo la licencia **ISC**. Consulta el archivo `package.json`
 ---
 
 <p align="center">
-  Hecho con ❤️ por <strong>NetPolix Team</strong>
+  Hecho con ❤️ por <a href="https://github.com/Yina-programmer"><strong>Yina-programmer</strong></a>
 </p>
 
 <p align="center">
